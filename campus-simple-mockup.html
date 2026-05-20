@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Campus Simple — Mockup TP Integrador IUM</title>
+<!--
+  Campus Simple — Mockup navegable
+  Trabajo Práctico Integrador - Interacción Usuario Máquina
+  Mockup conceptual de baja/media fidelidad.
+  Marco teórico aplicado: DCU, Dieter Rams/Bauhaus, Shneiderman (8 reglas de oro),
+  Miro-Leo-Pienso, Usabilidad/Accesibilidad, Interfaces Líquidas, Norman/Kano.
+-->
+<style>
+  /* =========================================================
+     TOKENS DE DISEÑO (Bauhaus / Rams: "menos, pero mejor")
+     Paleta sobria, jerarquía visual clara, espaciado consistente.
+     ========================================================= */
+  :root {
+    --azul-profundo: #0b2545;
+    --azul-medio:    #13315c;
+    --celeste:       #8ecae6;
+    --celeste-suave: #e6f3fa;
+    --blanco:        #ffffff;
+    --gris-fondo:    #f4f6f9;
+    --gris-borde:    #d9dee5;
+    --gris-texto:    #5b6573;
+    --negro-texto:   #1b2230;
+    --verde-ok:      #1f9d55;
+    --verde-suave:   #e3f5ec;
+    --rojo-error:    #c92a2a;
+    --rojo-suave:    #fde8e8;
+    --amarillo-warn: #b78103;
+    --amarillo-suave:#fff4d6;
+
+    --radio-s: 6px;
+    --radio-m: 10px;
+    --radio-l: 16px;
+
+    --sombra-1: 0 1px 2px rgba(11, 37, 69, 0.06), 0 1px 3px rgba(11, 37, 69, 0.08);
+    --sombra-2: 0 4px 14px rgba(11, 37, 69, 0.10);
+
+    --fs-xs: 12px;
+    --fs-s:  13px;
+    --fs-m:  15px;
+    --fs-l:  18px;
+    --fs-xl: 22px;
+    --fs-xxl:28px;
+  }
+
+  /* Reset mínimo */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                 Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+    background: var(--gris-fondo);
+    color: var(--negro-texto);
+    font-size: var(--fs-m);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Accesibilidad: foco visible y consistente (Shneiderman: consistencia + accesibilidad) */
+  :focus-visible {
+    outline: 3px solid var(--celeste);
+    outline-offset: 2px;
+    border-radius: var(--radio-s);
+  }
+
+  /* Salto al contenido (accesibilidad: navegación por teclado) */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--azul-profundo);
+    color: var(--blanco);
+    padding: 8px 12px;
+    z-index: 1000;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  /* =========================================================
+     HEADER GLOBAL
+     Identidad visual unificada en ambas vistas (Interfaces Líquidas).
+     ========================================================= */
+  .app-header {
+    background: var(--azul-profundo);
+    color: var(--blanco);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--sombra-1);
+  }
+  .app-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: var(--fs-l);
+    letter-spacing: 0.2px;
+  }
+  .app-brand .logo {
+    width: 32px; height: 32px;
+    background: var(--celeste);
+    color: var(--azul-profundo);
+    border-radius: var(--radio-s);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+  }
+
+  .role-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .role-controls label {
+    font-size: var(--fs-s);
+    color: var(--celeste-suave);
+  }
+  /* Botones de alternancia rol/vista (Shneiderman: atajos, control del usuario) */
+  .toggle-group {
+    display: inline-flex;
+    background: rgba(255,255,255,0.10);
+    border-radius: var(--radio-m);
+    padding: 3px;
+  }
+  .toggle-group button {
+    background: transparent;
+    border: 0;
+    color: var(--blanco);
+    padding: 8px 14px;
+    border-radius: var(--radio-s);
+    cursor: pointer;
+    font-size: var(--fs-s);
+    font-weight: 500;
+  }
+  .toggle-group button[aria-pressed="true"] {
+    background: var(--blanco);
+    color: var(--azul-profundo);
+  }
+  .toggle-group button:hover:not([aria-pressed="true"]) {
+    background: rgba(255,255,255,0.15);
+  }
+
+  /* =========================================================
+     LAYOUT PRINCIPAL
+     ========================================================= */
+  main {
+    padding: 24px;
+  }
+
+  /* Contenedor mobile (App alumno) - simula un teléfono */
+  .mobile-stage {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 32px;
+  }
+  .phone {
+    width: 380px;
+    max-width: 100%;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 28px;
+    box-shadow: var(--sombra-2);
+    overflow: hidden;
+    position: relative;
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone .status-bar {
+    background: var(--azul-profundo);
+    color: var(--celeste-suave);
+    font-size: var(--fs-xs);
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 16px;
+  }
+  .phone .screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--gris-fondo);
+  }
+  .phone .screen-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  /* Barra navegación inferior mobile (Shneiderman: atajos / accesos rápidos) */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background: var(--blanco);
+    border-top: 1px solid var(--gris-borde);
+    padding: 6px 0 8px;
+  }
+  .bottom-nav button {
+    background: transparent;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: var(--fs-xs);
+    color: var(--gris-texto);
+    padding: 8px 10px;
+    border-radius: var(--radio-s);
+    cursor: pointer;
+    min-width: 64px; /* botones táctiles grandes */
+  }
+  .bottom-nav button[aria-current="page"] {
+    color: var(--azul-profundo);
+    font-weight: 600;
+  }
+  .bottom-nav button .icon {
+    font-size: 20px;
+  }
+  .bottom-nav button:hover { background: var(--celeste-suave); }
+
+  /* Layout escritorio docente */
+  .desktop-stage {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    align-items: start;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-l);
+    overflow: hidden;
+    box-shadow: var(--sombra-1);
+    min-height: 720px;
+  }
+  .sidebar {
+    background: var(--azul-medio);
+    color: var(--blanco);
+    padding: 20px 12px;
+    min-height: 720px;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-s);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--celeste);
+    margin: 0 8px 12px;
+  }
+  .sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar nav button {
+    background: transparent;
+    border: 0;
+    color: var(--blanco);
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: var(--radio-s);
+    cursor: pointer;
+    font-size: var(--fs-m);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar nav button:hover { background: rgba(255,255,255,0.08); }
+  .sidebar nav button[aria-current="page"] {
+    background: var(--blanco);
+    color: var(--azul-profundo);
+    font-weight: 600;
+  }
+  .sidebar .user-card {
+    margin-top: 24px;
+    padding: 12px;
+    background: rgba(255,255,255,0.06);
+    border-radius: var(--radio-m);
+    font-size: var(--fs-s);
+  }
+
+  .desktop-content {
+    padding: 24px 28px;
+    min-width: 0; /* permite el scroll horizontal en tablas */
+  }
+  .page-title {
+    font-size: var(--fs-xxl);
+    margin: 0 0 4px;
+    color: var(--azul-profundo);
+  }
+  .page-subtitle {
+    color: var(--gris-texto);
+    margin: 0 0 20px;
+  }
+
+  /* =========================================================
+     COMPONENTES REUTILIZABLES
+     ========================================================= */
+  .card {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    padding: 16px;
+    box-shadow: var(--sombra-1);
+  }
+  .card + .card { margin-top: 12px; }
+  .card-title {
+    margin: 0 0 8px;
+    font-size: var(--fs-m);
+    color: var(--azul-profundo);
+    font-weight: 600;
+  }
+  .card-meta { color: var(--gris-texto); font-size: var(--fs-s); }
+
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card .stat-number {
+    font-size: var(--fs-xxl);
+    color: var(--azul-profundo);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  /* Botones (Rams: claros y funcionales, sin decoración innecesaria) */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 18px;
+    border-radius: var(--radio-s);
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: var(--fs-m);
+    font-weight: 600;
+    min-height: 44px; /* tamaño táctil accesible */
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:focus-visible { outline-offset: 3px; }
+  .btn-primary {
+    background: var(--azul-profundo);
+    color: var(--blanco);
+  }
+  .btn-primary:hover  { background: var(--azul-medio); }
+  .btn-secondary {
+    background: var(--blanco);
+    color: var(--azul-profundo);
+    border-color: var(--azul-profundo);
+  }
+  .btn-secondary:hover { background: var(--celeste-suave); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--azul-profundo);
+  }
+  .btn-ghost:hover { background: var(--celeste-suave); }
+  .btn-danger {
+    background: var(--rojo-error);
+    color: var(--blanco);
+  }
+  .btn-danger:hover { background: #a31919; }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-block { width: 100%; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Badges de estado (no dependen sólo del color: incluyen texto e ícono) */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    border: 1px solid transparent;
+  }
+  .badge-ok    { background: var(--verde-suave);    color: var(--verde-ok);    border-color: #c6ebd5; }
+  .badge-warn  { background: var(--amarillo-suave); color: var(--amarillo-warn); border-color: #f3e0a4; }
+  .badge-error { background: var(--rojo-suave);     color: var(--rojo-error);  border-color: #f5c6c6; }
+  .badge-info  { background: var(--celeste-suave);  color: var(--azul-profundo); border-color: #c9e3f0; }
+
+  /* Alertas (feedback Shneiderman, sin depender sólo del color) */
+  .alert {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radio-s);
+    border: 1px solid;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    font-size: var(--fs-s);
+  }
+  .alert .alert-icon { font-size: 18px; line-height: 1; }
+  .alert-info    { background: var(--celeste-suave);  border-color: #b6daea; color: var(--azul-profundo); }
+  .alert-warn    { background: var(--amarillo-suave); border-color: #f0d57c; color: var(--amarillo-warn); }
+  .alert-success { background: var(--verde-suave);    border-color: #b8e0c8; color: var(--verde-ok); }
+  .alert-error   { background: var(--rojo-suave);     border-color: #f1b8b8; color: var(--rojo-error); }
+
+  /* Formularios (Shneiderman: prevención de errores, labels claros) */
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .form-field label {
+    font-size: var(--fs-s);
+    color: var(--azul-medio);
+    font-weight: 600;
+  }
+  .form-field .hint {
+    font-size: var(--fs-xs);
+    color: var(--gris-texto);
+  }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    padding: 12px;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-s);
+    font-size: var(--fs-m);
+    background: var(--blanco);
+    font-family: inherit;
+  }
+  .form-field input:hover,
+  .form-field select:hover {
+    border-color: var(--azul-medio);
+  }
+  .form-field input[aria-invalid="true"] {
+    border-color: var(--rojo-error);
+    background: var(--rojo-suave);
+  }
+  .field-error {
+    font-size: var(--fs-xs);
+    color: var(--rojo-error);
+    display: none;
+  }
+  .form-field.invalid .field-error { display: block; }
+
+  /* Tablas (escritorio docente) */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    background: var(--blanco);
+  }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  table.data th,
+  table.data td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-borde);
+    font-size: var(--fs-s);
+    vertical-align: middle;
+  }
+  table.data thead th {
+    background: var(--celeste-suave);
+    color: var(--azul-profundo);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+  }
+  table.data tbody tr:hover { background: #f9fbfd; }
+  table.data input[type="number"] {
+    width: 72px;
+    padding: 8px;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-s);
+    font-size: var(--fs-m);
+    text-align: center;
+  }
+  table.data input[type="number"][aria-invalid="true"] {
+    border-color: var(--rojo-error);
+    background: var(--rojo-suave);
+  }
+
+  /* Contexto siempre visible (Shneiderman: reducir memoria de corto plazo) */
+  .context-bar {
+    background: var(--celeste-suave);
+    border: 1px solid #c9e3f0;
+    padding: 10px 14px;
+    border-radius: var(--radio-m);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: var(--fs-s);
+    color: var(--azul-profundo);
+  }
+  .context-bar strong { color: var(--azul-medio); }
+
+  /* Steps (flujo de inscripción) - cierre claro de secuencia */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: var(--fs-xs);
+  }
+  .stepper .step {
+    flex: 1;
+    text-align: center;
+    padding: 8px 6px;
+    border-radius: var(--radio-s);
+    background: var(--gris-fondo);
+    color: var(--gris-texto);
+    border: 1px solid var(--gris-borde);
+  }
+  .stepper .step.active {
+    background: var(--azul-profundo);
+    color: var(--blanco);
+    border-color: var(--azul-profundo);
+    font-weight: 600;
+  }
+  .stepper .step.done {
+    background: var(--verde-suave);
+    color: var(--verde-ok);
+    border-color: #b8e0c8;
+  }
+
+  /* Modal (confirmación crítica - Miro-Leo-Pienso) */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 37, 69, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--blanco);
+    border-radius: var(--radio-m);
+    box-shadow: var(--sombra-2);
+    max-width: 460px;
+    width: 100%;
+    padding: 22px;
+  }
+  .modal h3 {
+    margin: 0 0 8px;
+    color: var(--azul-profundo);
+    font-size: var(--fs-l);
+  }
+  .modal p { margin: 0 0 16px; color: var(--negro-texto); }
+  .modal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Toast de feedback */
+  .toast-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 300;
+  }
+  .toast {
+    background: var(--azul-profundo);
+    color: var(--blanco);
+    padding: 12px 16px;
+    border-radius: var(--radio-s);
+    box-shadow: var(--sombra-2);
+    min-width: 220px;
+    font-size: var(--fs-s);
+    animation: slideIn 0.25s ease-out;
+  }
+  .toast.success { background: var(--verde-ok); }
+  .toast.error   { background: var(--rojo-error); }
+  @keyframes slideIn {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Helpers de navegación entre pantallas */
+  .screen-step { display: none; }
+  .screen-step.active { display: block; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Pantalla de login del docente (escritorio): tarjeta centrada, sin sidebar */
+  .desktop-login-stage {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 24px;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-l);
+    box-shadow: var(--sombra-1);
+    min-height: 560px;
+  }
+  .desktop-login-stage.active { display: flex; }
+  .desktop-login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    padding: 28px;
+    box-shadow: var(--sombra-1);
+  }
+  .desktop-login-card .login-logo { margin: 0 auto 12px; }
+
+  /* Ícono universal de cierre de sesión (puerta + flecha saliendo).
+     Mantiene aria-label para accesibilidad (no depender sólo del ícono). */
+  .logout-icon-btn {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    color: var(--azul-profundo);
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: var(--radio-s);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .logout-icon-btn:hover {
+    background: var(--rojo-suave);
+    border-color: var(--rojo-error);
+    color: var(--rojo-error);
+  }
+  .logout-icon-btn svg { display: block; }
+
+  /* Mobile: botón ícono al final del screen-header */
+  .screen-header .logout-icon-btn { margin-left: auto; }
+
+  /* Desktop docente: ícono flotante arriba a la derecha del panel */
+  .desktop-stage { position: relative; }
+  .logout-corner {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 4;
+  }
+
+  /* Listados mobile */
+  .list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 12px;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+  .list-item .li-title {
+    font-weight: 600;
+    color: var(--azul-profundo);
+    margin: 0 0 2px;
+    font-size: var(--fs-m);
+  }
+  .list-item .li-sub {
+    color: var(--gris-texto);
+    font-size: var(--fs-s);
+  }
+  .list-item button { min-width: 44px; min-height: 36px; padding: 6px 12px; }
+
+  .section-title {
+    font-size: var(--fs-s);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gris-texto);
+    margin: 18px 0 8px;
+  }
+
+  /* Pantalla bienvenida alumno */
+  .hero {
+    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+    color: var(--blanco);
+    border-radius: var(--radio-m);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .hero h2 { margin: 0; font-size: var(--fs-l); }
+  .hero p { margin: 4px 0 0; color: var(--celeste-suave); font-size: var(--fs-s); }
+
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .quick-actions button {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: var(--fs-xs);
+    color: var(--azul-profundo);
+    font-weight: 600;
+  }
+  .quick-actions button:hover { background: var(--celeste-suave); }
+  .quick-actions .icon { font-size: 22px; }
+
+  /* Login mobile */
+  .login-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-logo {
+    width: 64px;
+    height: 64px;
+    background: var(--azul-profundo);
+    color: var(--blanco);
+    border-radius: var(--radio-m);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+  }
+
+  /* Comprobante de inscripción */
+  .receipt {
+    background: var(--blanco);
+    border: 2px dashed var(--verde-ok);
+    border-radius: var(--radio-m);
+    padding: 16px;
+    text-align: center;
+  }
+  .receipt .check {
+    font-size: 40px;
+    color: var(--verde-ok);
+  }
+
+  /* Notas - filtro */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .filter-row select {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-s);
+    background: var(--blanco);
+    font-size: var(--fs-m);
+  }
+
+  /* Header interno de las pantallas mobile (back + título) */
+  .screen-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blanco);
+    border-bottom: 1px solid var(--gris-borde);
+    padding: 12px 14px;
+  }
+  .screen-header .back-btn {
+    background: transparent;
+    border: 0;
+    font-size: 20px;
+    color: var(--azul-profundo);
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: var(--radio-s);
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .screen-header .back-btn:hover { background: var(--celeste-suave); }
+  .screen-header h1 {
+    margin: 0;
+    font-size: var(--fs-l);
+    color: var(--azul-profundo);
+  }
+
+  /* Tabs presente/ausente/tarde */
+  .attendance-options {
+    display: flex;
+    gap: 4px;
+  }
+  .attendance-options label {
+    flex: 1;
+    padding: 6px 8px;
+    text-align: center;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-s);
+    cursor: pointer;
+    font-size: var(--fs-xs);
+    background: var(--blanco);
+    color: var(--gris-texto);
+    font-weight: 600;
+  }
+  .attendance-options input { position: absolute; opacity: 0; pointer-events: none; }
+  .attendance-options label:hover { background: var(--celeste-suave); }
+  .attendance-options input:checked + span { /* fallback */ }
+  .attendance-options label.selected.presente {
+    background: var(--verde-suave);
+    color: var(--verde-ok);
+    border-color: #b8e0c8;
+  }
+  .attendance-options label.selected.ausente {
+    background: var(--rojo-suave);
+    color: var(--rojo-error);
+    border-color: #f1b8b8;
+  }
+  .attendance-options label.selected.tarde {
+    background: var(--amarillo-suave);
+    color: var(--amarillo-warn);
+    border-color: #f0d57c;
+  }
+
+  /* Cards de marco teórico */
+  .theory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .theory-card {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-m);
+    padding: 16px;
+    box-shadow: var(--sombra-1);
+  }
+  .theory-card h3 {
+    margin: 0 0 8px;
+    color: var(--azul-profundo);
+    font-size: var(--fs-m);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .theory-card .tag {
+    display: inline-block;
+    background: var(--celeste-suave);
+    color: var(--azul-profundo);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+  }
+  .theory-card ul { margin: 8px 0 0; padding-left: 18px; font-size: var(--fs-s); color: var(--negro-texto); }
+  .theory-card li { margin-bottom: 4px; }
+
+  /* Responsive: tablet/mobile para el panel docente */
+  @media (max-width: 900px) {
+    .desktop-stage {
+      grid-template-columns: 1fr;
+    }
+    .sidebar { min-height: auto; }
+    .sidebar nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    main { padding: 12px; }
+  }
+
+  /* Pequeño helper visual */
+  .hr { height: 1px; background: var(--gris-borde); margin: 14px 0; border: 0; }
+  .text-muted { color: var(--gris-texto); }
+  .text-right { text-align: right; }
+  .mt-0 { margin-top: 0; }
+  .mt-1 { margin-top: 8px; }
+  .mt-2 { margin-top: 16px; }
+  .mb-1 { margin-bottom: 8px; }
+  .mb-2 { margin-bottom: 16px; }
+  .gap-1 { gap: 8px; }
+  .flex { display: flex; }
+  .between { justify-content: space-between; align-items: center; }
+  .wrap { flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<a href="#contenido" class="skip-link">Saltar al contenido principal</a>
+
+<!--
+  HEADER GLOBAL
+  - Identidad visual unificada en ambas vistas (Interfaces Líquidas).
+  - Selector de rol y selector de vista visibles siempre (Shneiderman: control del usuario).
+-->
+<header class="app-header" role="banner">
+  <div class="app-brand">
+    <span class="logo" aria-hidden="true">CS</span>
+    <span>Campus Simple</span>
+  </div>
+
+  <div class="role-controls">
+    <label for="rol-select">Rol:</label>
+    <select id="rol-select" aria-label="Seleccionar rol de usuario">
+      <option value="alumno">Alumno</option>
+      <option value="docente">Docente</option>
+    </select>
+
+    <div class="toggle-group" role="group" aria-label="Cambiar vista del prototipo">
+      <button id="btn-vista-alumno" type="button" aria-pressed="true">Vista App Alumno</button>
+      <button id="btn-vista-docente" type="button" aria-pressed="false">Vista Web Docente</button>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <!-- =============================================================
+       VISTA ALUMNO - APP MOBILE
+       Toda la app del alumno vive dentro de un contenedor "teléfono"
+       para reforzar la lectura conceptual del entregable.
+       ============================================================= -->
+  <section id="view-alumno" class="view active" aria-label="Vista App Alumno">
+
+    <div class="mobile-stage">
+      <div class="phone" role="region" aria-label="Simulación de aplicación móvil">
+
+        <div class="status-bar" aria-hidden="true">
+          <span>9:41</span>
+          <span>Campus Simple</span>
+          <span>100%</span>
+        </div>
+
+        <div class="screen">
+
+          <!-- ============== PANTALLA 1: LOGIN ============== -->
+          <!-- Miro-Leo-Pienso: campos autoexplicativos. Accesibilidad: labels asociados. -->
+          <div class="screen-step active" id="alumno-login" data-screen="login">
+            <div class="login-screen">
+              <div class="login-logo" aria-hidden="true">CS</div>
+              <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Bienvenido</h1>
+              <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Ingresá con tu usuario o DNI</p>
+
+              <form id="form-login" novalidate>
+                <div class="form-field">
+                  <label for="login-usuario">Usuario o DNI</label>
+                  <input type="text" id="login-usuario" name="usuario" autocomplete="username"
+                         aria-describedby="hint-usuario" required value="35.123.456" />
+                  <span class="hint" id="hint-usuario">Podés usar tu número de DNI sin puntos.</span>
+                  <span class="field-error">Ingresá tu usuario o DNI.</span>
+                </div>
+
+                <div class="form-field">
+                  <label for="login-pass">Contraseña</label>
+                  <input type="password" id="login-pass" name="pass" autocomplete="current-password"
+                         required minlength="4" value="demo1234" />
+                  <span class="field-error">La contraseña no puede estar vacía.</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+
+                <div style="text-align:center; margin-top: 14px;">
+                  <a href="#" class="btn btn-ghost" onclick="event.preventDefault(); showToast('Te enviamos un mail con instrucciones.', 'success')">¿Olvidaste tu clave?</a>
+                </div>
+
+                <!-- Alerta accesible: ayuda visible y no dependiente del color -->
+                <div class="alert alert-info" role="note" style="margin-top:18px;">
+                  <span class="alert-icon" aria-hidden="true">ⓘ</span>
+                  <div>Si es la primera vez que ingresás, usá los últimos 6 dígitos de tu DNI como contraseña.</div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ============== PANTALLA 2: HOME ALUMNO ============== -->
+          <!-- Miro-Leo-Pienso: tareas cotidianas al golpe de vista. -->
+          <div class="screen-step" id="alumno-home" data-screen="home">
+            <div class="screen-header">
+              <h1>Inicio</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="hero" role="region" aria-label="Próxima clase">
+                <p style="margin:0; font-size: var(--fs-xs); color: var(--celeste);">¡Hola, Lucía!</p>
+                <h2>Próxima clase</h2>
+                <p><strong>Interacción Usuario Máquina</strong> · Hoy 18:30 · Aula 304</p>
+              </div>
+
+              <p class="section-title">Accesos rápidos</p>
+              <!-- Shneiderman: atajos. Tamaño táctil grande. -->
+              <div class="quick-actions">
+                <button onclick="goAlumno('inscripcion-paso1')" aria-label="Inscribirme a materias o exámenes">
+                  <span class="icon" aria-hidden="true">＋</span>
+                  Inscribirme
+                </button>
+                <button onclick="goAlumno('notas')" aria-label="Ver mis notas">
+                  <span class="icon" aria-hidden="true">📊</span>
+                  Notas
+                </button>
+                <button onclick="goAlumno('calendario')" aria-label="Ver calendario académico">
+                  <span class="icon" aria-hidden="true">🗓</span>
+                  Calendario
+                </button>
+              </div>
+
+              <p class="section-title">Alertas académicas</p>
+              <div class="alert alert-warn" role="alert">
+                <span class="alert-icon" aria-hidden="true">⚠</span>
+                <div>
+                  <strong>Inscripción a finales abierta</strong> hasta el 30/05.
+                </div>
+              </div>
+              <div class="alert alert-info" role="note">
+                <span class="alert-icon" aria-hidden="true">ⓘ</span>
+                <div>Tenés <strong>1 acta firmada</strong> nueva en Algoritmos II.</div>
+              </div>
+
+              <p class="section-title">Materias cursando</p>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Interacción Usuario Máquina</p>
+                  <p class="li-sub">Comisión A · Lun-Mié 18:30</p>
+                </div>
+                <span class="badge badge-ok">Al día</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Algoritmos II</p>
+                  <p class="li-sub">Comisión B · Mar-Jue 20:00</p>
+                </div>
+                <span class="badge badge-warn">Pendiente</span>
+              </div>
+            </div>
+
+            <!-- Navegación inferior (Shneiderman: atajos / consistencia) -->
+            <nav class="bottom-nav" aria-label="Navegación principal">
+              <button aria-current="page" onclick="goAlumno('home')">
+                <span class="icon" aria-hidden="true">🏠</span><span>Inicio</span>
+              </button>
+              <button onclick="goAlumno('inscripcion-paso1')">
+                <span class="icon" aria-hidden="true">📝</span><span>Inscripción</span>
+              </button>
+              <button onclick="goAlumno('notas')">
+                <span class="icon" aria-hidden="true">📊</span><span>Notas</span>
+              </button>
+              <button onclick="goAlumno('calendario')">
+                <span class="icon" aria-hidden="true">🗓</span><span>Calendario</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- ============== PANTALLA 3: INSCRIPCIÓN - PASO 1 ============== -->
+          <!-- Shneiderman: secuencia con cierre claro (stepper visible). -->
+          <div class="screen-step" id="alumno-inscripcion-paso1" data-screen="inscripcion-paso1">
+            <div class="screen-header">
+              <button class="back-btn" aria-label="Volver al inicio" onclick="goAlumno('home')">←</button>
+              <h1>Inscripción</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="stepper" aria-label="Pasos del proceso de inscripción">
+                <div class="step active">1. Elegir</div>
+                <div class="step">2. Revisar</div>
+                <div class="step">3. Confirmar</div>
+              </div>
+
+              <p class="text-muted" style="margin-top:0;">Seleccioná una materia o examen disponible.</p>
+
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Bases de Datos II</p>
+                  <p class="li-sub">Cursada · Comisión A · Cupo 12/30</p>
+                </div>
+                <button class="btn btn-secondary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada')">Elegir</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Sistemas Operativos</p>
+                  <p class="li-sub">Final · Mesa 28/05 · 20:00</p>
+                </div>
+                <button class="btn btn-secondary" onclick="seleccionarMateria('Sistemas Operativos', 'Final')">Elegir</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Estadística Aplicada</p>
+                  <p class="li-sub">Cursada · Comisión C · Cupo 28/30</p>
+                </div>
+                <button class="btn btn-secondary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada')">Elegir</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Inglés Técnico</p>
+                  <p class="li-sub">Final · Mesa 02/06 · 19:00</p>
+                </div>
+                <button class="btn btn-secondary" onclick="seleccionarMateria('Inglés Técnico', 'Final')">Elegir</button>
+              </div>
+            </div>
+
+            <nav class="bottom-nav" aria-label="Navegación principal">
+              <button onclick="goAlumno('home')"><span class="icon" aria-hidden="true">🏠</span><span>Inicio</span></button>
+              <button aria-current="page" onclick="goAlumno('inscripcion-paso1')"><span class="icon" aria-hidden="true">📝</span><span>Inscripción</span></button>
+              <button onclick="goAlumno('notas')"><span class="icon" aria-hidden="true">📊</span><span>Notas</span></button>
+              <button onclick="goAlumno('calendario')"><span class="icon" aria-hidden="true">🗓</span><span>Calendario</span></button>
+            </nav>
+          </div>
+
+          <!-- ============== PANTALLA 3.2: INSCRIPCIÓN - PASO 2 (REVISAR) ============== -->
+          <!-- Reducción de memoria: muestra resumen antes de confirmar. -->
+          <div class="screen-step" id="alumno-inscripcion-paso2" data-screen="inscripcion-paso2">
+            <div class="screen-header">
+              <button class="back-btn" aria-label="Volver al paso anterior" onclick="goAlumno('inscripcion-paso1')">←</button>
+              <h1>Revisar</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="stepper" aria-label="Pasos del proceso de inscripción">
+                <div class="step done">1. Elegir</div>
+                <div class="step active">2. Revisar</div>
+                <div class="step">3. Confirmar</div>
+              </div>
+
+              <div class="card">
+                <h3 class="card-title" id="resumen-materia">Bases de Datos II</h3>
+                <p class="card-meta" id="resumen-tipo">Cursada · Comisión A</p>
+                <hr class="hr" />
+                <p style="margin:6px 0;"><strong>Horario:</strong> Mar y Jue · 18:30 a 21:30</p>
+                <p style="margin:6px 0;"><strong>Aula:</strong> 207</p>
+                <p style="margin:6px 0;"><strong>Cupo:</strong> 12 / 30</p>
+                <p style="margin:6px 0;"><strong>Requisitos:</strong> Bases de Datos I aprobada</p>
+              </div>
+
+              <div class="alert alert-info" style="margin-top:14px;" role="note">
+                <span class="alert-icon" aria-hidden="true">ⓘ</span>
+                <div>Verificamos que cumplís con los requisitos. Si algo no es correcto, podés volver atrás.</div>
+              </div>
+
+              <div class="btn-row" style="margin-top:16px;">
+                <button class="btn btn-secondary" onclick="goAlumno('inscripcion-paso1')">Volver</button>
+                <button class="btn btn-primary" onclick="goAlumno('inscripcion-paso3')">Continuar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============== PANTALLA 3.3: INSCRIPCIÓN - PASO 3 (CONFIRMAR) ============== -->
+          <!-- Miro-Leo-Pienso: modal obliga a "pensar" antes de confirmar. -->
+          <div class="screen-step" id="alumno-inscripcion-paso3" data-screen="inscripcion-paso3">
+            <div class="screen-header">
+              <button class="back-btn" aria-label="Volver al paso anterior" onclick="goAlumno('inscripcion-paso2')">←</button>
+              <h1>Confirmar</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="stepper" aria-label="Pasos del proceso de inscripción">
+                <div class="step done">1. Elegir</div>
+                <div class="step done">2. Revisar</div>
+                <div class="step active">3. Confirmar</div>
+              </div>
+
+              <div class="card">
+                <h3 class="card-title">Listo para inscribirte</h3>
+                <p class="card-meta">
+                  <span id="confirm-materia">Bases de Datos II</span> ·
+                  <span id="confirm-tipo">Cursada</span>
+                </p>
+                <p style="margin-top:8px;">Una vez confirmada, la inscripción quedará registrada y recibirás un comprobante.</p>
+              </div>
+
+              <div class="btn-row" style="margin-top:16px;">
+                <button class="btn btn-secondary" onclick="goAlumno('inscripcion-paso2')">Volver</button>
+                <button class="btn btn-primary" onclick="abrirModal('modal-confirmar-inscripcion')">Confirmar inscripción</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============== PANTALLA 3.4: COMPROBANTE ============== -->
+          <!-- Feedback claro de cierre de secuencia (Shneiderman). -->
+          <div class="screen-step" id="alumno-inscripcion-ok" data-screen="inscripcion-ok">
+            <div class="screen-header">
+              <h1>Comprobante</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="receipt" role="status" aria-live="polite">
+                <div class="check" aria-hidden="true">✓</div>
+                <h2 style="margin: 8px 0 4px; color: var(--azul-profundo);">¡Inscripción confirmada!</h2>
+                <p class="text-muted" style="margin:0;">N° de comprobante: <strong>CS-2026-0427</strong></p>
+                <hr class="hr" />
+                <p style="margin:6px 0;"><strong id="ok-materia">Bases de Datos II</strong></p>
+                <p class="text-muted" style="margin:0;"><span id="ok-tipo">Cursada</span> · Comisión A</p>
+                <p class="text-muted" style="margin:6px 0 0;">Guardalo o consultalo desde "Mis inscripciones".</p>
+              </div>
+
+              <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="goAlumno('home')">Volver al inicio</button>
+            </div>
+          </div>
+
+          <!-- ============== PANTALLA 4: NOTAS ============== -->
+          <div class="screen-step" id="alumno-notas" data-screen="notas">
+            <div class="screen-header">
+              <button class="back-btn" aria-label="Volver al inicio" onclick="goAlumno('home')">←</button>
+              <h1>Mis notas</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <div class="filter-row">
+                <label for="filtro-periodo" class="sr-only" style="position:absolute; left:-9999px;">Filtrar por período</label>
+                <select id="filtro-periodo" aria-label="Filtrar por período" onchange="filtrarNotas()">
+                  <option value="todos">Todos los períodos</option>
+                  <option value="2026-1">2026 · 1er cuatrimestre</option>
+                  <option value="2025-2">2025 · 2do cuatrimestre</option>
+                  <option value="2025-1">2025 · 1er cuatrimestre</option>
+                </select>
+              </div>
+
+              <div id="notas-lista">
+                <div class="list-item" data-periodo="2026-1">
+                  <div>
+                    <p class="li-title">Interacción Usuario Máquina</p>
+                    <p class="li-sub">2026 · 1er cuat. · Nota: <strong>9</strong></p>
+                  </div>
+                  <span class="badge badge-ok">Promocionada</span>
+                </div>
+                <div class="list-item" data-periodo="2026-1">
+                  <div>
+                    <p class="li-title">Algoritmos II</p>
+                    <p class="li-sub">2026 · 1er cuat. · Nota: <strong>7</strong></p>
+                  </div>
+                  <span class="badge badge-info">Regular</span>
+                </div>
+                <div class="list-item" data-periodo="2026-1">
+                  <div>
+                    <p class="li-title">Bases de Datos II</p>
+                    <p class="li-sub">2026 · 1er cuat. · Nota: —</p>
+                  </div>
+                  <span class="badge badge-warn">Pendiente</span>
+                </div>
+                <div class="list-item" data-periodo="2025-2">
+                  <div>
+                    <p class="li-title">Programación III</p>
+                    <p class="li-sub">2025 · 2do cuat. · Nota: <strong>8</strong></p>
+                  </div>
+                  <span class="badge badge-ok">Promocionada</span>
+                </div>
+                <div class="list-item" data-periodo="2025-2">
+                  <div>
+                    <p class="li-title">Matemática Discreta</p>
+                    <p class="li-sub">2025 · 2do cuat. · Nota: <strong>6</strong></p>
+                  </div>
+                  <span class="badge badge-info">Regular</span>
+                </div>
+                <div class="list-item" data-periodo="2025-1">
+                  <div>
+                    <p class="li-title">Análisis Matemático I</p>
+                    <p class="li-sub">2025 · 1er cuat. · Nota: <strong>4</strong></p>
+                  </div>
+                  <span class="badge badge-error">Pendiente</span>
+                </div>
+              </div>
+            </div>
+
+            <nav class="bottom-nav" aria-label="Navegación principal">
+              <button onclick="goAlumno('home')"><span class="icon" aria-hidden="true">🏠</span><span>Inicio</span></button>
+              <button onclick="goAlumno('inscripcion-paso1')"><span class="icon" aria-hidden="true">📝</span><span>Inscripción</span></button>
+              <button aria-current="page" onclick="goAlumno('notas')"><span class="icon" aria-hidden="true">📊</span><span>Notas</span></button>
+              <button onclick="goAlumno('calendario')"><span class="icon" aria-hidden="true">🗓</span><span>Calendario</span></button>
+            </nav>
+          </div>
+
+          <!-- ============== PANTALLA EXTRA: CALENDARIO (placeholder simple) ============== -->
+          <div class="screen-step" id="alumno-calendario" data-screen="calendario">
+            <div class="screen-header">
+              <button class="back-btn" aria-label="Volver al inicio" onclick="goAlumno('home')">←</button>
+              <h1>Calendario</h1>
+              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="screen-body">
+              <p class="section-title">Esta semana</p>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Lun 20/05 · IUM</p>
+                  <p class="li-sub">18:30 · Aula 304</p>
+                </div>
+                <span class="badge badge-info">Clase</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Mié 22/05 · IUM</p>
+                  <p class="li-sub">18:30 · Aula 304</p>
+                </div>
+                <span class="badge badge-info">Clase</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Jue 23/05 · Algoritmos II</p>
+                  <p class="li-sub">Entrega TP 1 · 23:59</p>
+                </div>
+                <span class="badge badge-warn">Entrega</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Vie 24/05 · IUM</p>
+                  <p class="li-sub">Examen parcial · 18:30</p>
+                </div>
+                <span class="badge badge-error">Parcial</span>
+              </div>
+            </div>
+
+            <nav class="bottom-nav" aria-label="Navegación principal">
+              <button onclick="goAlumno('home')"><span class="icon" aria-hidden="true">🏠</span><span>Inicio</span></button>
+              <button onclick="goAlumno('inscripcion-paso1')"><span class="icon" aria-hidden="true">📝</span><span>Inscripción</span></button>
+              <button onclick="goAlumno('notas')"><span class="icon" aria-hidden="true">📊</span><span>Notas</span></button>
+              <button aria-current="page" onclick="goAlumno('calendario')"><span class="icon" aria-hidden="true">🗓</span><span>Calendario</span></button>
+            </nav>
+          </div>
+
+        </div><!-- /.screen -->
+
+      </div><!-- /.phone -->
+    </div><!-- /.mobile-stage -->
+  </section>
+
+  <!-- =============================================================
+       VISTA DOCENTE - WEB ESCRITORIO
+       Panel administrativo amplio. Menú lateral persistente.
+       ============================================================= -->
+  <section id="view-docente" class="view" aria-label="Vista Web Docente">
+
+    <!-- Pantalla de login del docente (escritorio) -->
+    <div class="desktop-login-stage active" id="docente-login-stage" role="region" aria-label="Acceso del docente">
+      <div class="desktop-login-card">
+        <div class="login-logo" aria-hidden="true">CS</div>
+        <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Campus Simple</h1>
+        <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Acceso para docentes</p>
+
+        <form id="form-login-docente" novalidate>
+          <div class="form-field">
+            <label for="login-docente-usuario">Usuario institucional</label>
+            <input type="text" id="login-docente-usuario" name="usuario" autocomplete="username"
+                   aria-describedby="hint-docente-usuario" required value="mdiaz@campus.edu.ar" />
+            <span class="hint" id="hint-docente-usuario">Usá tu correo institucional o legajo docente.</span>
+            <span class="field-error">Ingresá tu usuario institucional.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="login-docente-pass">Contraseña</label>
+            <input type="password" id="login-docente-pass" name="pass" autocomplete="current-password"
+                   required minlength="4" value="demo1234" />
+            <span class="field-error">La contraseña no puede estar vacía.</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+
+          <div style="text-align:center; margin-top: 14px;">
+            <a href="#" class="btn btn-ghost" onclick="event.preventDefault(); showToast('Te enviamos un mail con instrucciones.', 'success')">¿Olvidaste tu clave?</a>
+          </div>
+
+          <div class="alert alert-info" role="note" style="margin-top:18px;">
+            <span class="alert-icon" aria-hidden="true">ⓘ</span>
+            <div>Tu sesión es personal y queda registrada en el sistema académico.</div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="desktop-stage" id="docente-app-stage" style="display:none;">
+
+      <!-- Ícono universal de cierre de sesión (arriba a la derecha).
+           Accesibilidad: aria-label + title para no depender sólo del ícono. -->
+      <button class="logout-icon-btn logout-corner" onclick="logoutDocente()"
+              aria-label="Cerrar sesión" title="Cerrar sesión">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+
+
+      <!-- Menú lateral (Shneiderman: consistencia + control del usuario) -->
+      <aside class="sidebar" aria-label="Menú principal del docente">
+        <h2>Campus Simple</h2>
+        <nav>
+          <button data-docente-target="panel" aria-current="page" onclick="goDocente('panel')">
+            <span aria-hidden="true">▦</span> Panel
+          </button>
+          <button data-docente-target="notas" onclick="goDocente('notas')">
+            <span aria-hidden="true">✎</span> Carga de notas
+          </button>
+          <button data-docente-target="asistencia" onclick="goDocente('asistencia')">
+            <span aria-hidden="true">✓</span> Asistencias
+          </button>
+          <button data-docente-target="ayuda" onclick="goDocente('ayuda')">
+            <span aria-hidden="true">ⓘ</span> Ayuda teórica
+          </button>
+        </nav>
+
+        <div class="user-card">
+          <div style="font-weight:600;">Prof. Martín Díaz</div>
+          <div class="text-muted" style="color: var(--celeste-suave);">Cátedra IUM · 2026</div>
+        </div>
+      </aside>
+
+      <!-- Contenido principal docente -->
+      <div class="desktop-content">
+
+        <!-- ============== PANEL DOCENTE ============== -->
+        <div class="screen-step active" id="docente-panel" data-screen-d="panel">
+          <h1 class="page-title">Panel del docente</h1>
+          <p class="page-subtitle">Tu jornada de hoy, lunes 20 de mayo de 2026.</p>
+
+          <div class="grid-cards">
+            <div class="card stat-card">
+              <p class="card-meta">Cursos de hoy</p>
+              <div class="stat-number">2</div>
+              <p class="card-meta">IUM · Algoritmos II</p>
+            </div>
+            <div class="card stat-card">
+              <p class="card-meta">Actas por cerrar</p>
+              <div class="stat-number">3</div>
+              <p class="card-meta">Vencen el 30/05</p>
+            </div>
+            <div class="card stat-card">
+              <p class="card-meta">Pendientes</p>
+              <div class="stat-number">5</div>
+              <p class="card-meta">Asistencias y notas borrador</p>
+            </div>
+          </div>
+
+          <p class="section-title">Accesos rápidos</p>
+          <div class="btn-row mb-2">
+            <button class="btn btn-primary" onclick="goDocente('notas')">Cargar notas</button>
+            <button class="btn btn-secondary" onclick="goDocente('asistencia')">Tomar asistencia</button>
+            <button class="btn btn-ghost" onclick="goDocente('ayuda')">Ver criterios pedagógicos</button>
+          </div>
+
+          <p class="section-title">Mis cursos</p>
+          <div class="grid-cards">
+            <div class="card">
+              <h3 class="card-title">Interacción Usuario Máquina</h3>
+              <p class="card-meta">Comisión A · Lunes y Miércoles 18:30</p>
+              <hr class="hr" />
+              <div class="btn-row">
+                <button class="btn btn-secondary" onclick="goDocente('asistencia')">Asistencia</button>
+                <button class="btn btn-secondary" onclick="goDocente('notas')">Notas</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Algoritmos II</h3>
+              <p class="card-meta">Comisión B · Martes y Jueves 20:00</p>
+              <hr class="hr" />
+              <div class="btn-row">
+                <button class="btn btn-secondary" onclick="goDocente('asistencia')">Asistencia</button>
+                <button class="btn btn-secondary" onclick="goDocente('notas')">Notas</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== CARGA DE NOTAS ============== -->
+        <!-- Shneiderman: prevención de errores con validación de rango 1-10. -->
+        <div class="screen-step" id="docente-notas" data-screen-d="notas">
+          <h1 class="page-title">Carga de notas</h1>
+          <p class="page-subtitle">Cargá las notas finales o guardá un borrador para terminar después.</p>
+
+          <!-- Contexto siempre visible: reducción de memoria de corto plazo -->
+          <div class="context-bar" role="region" aria-label="Contexto del acta">
+            <div><strong>Materia:</strong> Interacción Usuario Máquina</div>
+            <div><strong>Comisión:</strong> A · Turno Noche</div>
+            <div><strong>Período:</strong> 2026 · 1° cuatrimestre</div>
+            <div><strong>Estado:</strong> <span class="badge badge-warn">Borrador</span></div>
+          </div>
+
+          <form id="form-notas" novalidate>
+            <div class="table-wrap">
+              <table class="data" aria-label="Notas de alumnos">
+                <thead>
+                  <tr>
+                    <th scope="col">Legajo</th>
+                    <th scope="col">Alumno</th>
+                    <th scope="col">Nota (1-10)</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-notas-body">
+                  <!-- Generado por JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-info mt-2" role="note">
+              <span class="alert-icon" aria-hidden="true">ⓘ</span>
+              <div>Solo se aceptan valores numéricos entre 1 y 10. Si dejás un campo vacío, el alumno queda como "Pendiente".</div>
+            </div>
+
+            <div class="btn-row mt-2">
+              <button type="button" class="btn btn-secondary" onclick="guardarBorradorNotas()">Guardar borrador</button>
+              <button type="button" class="btn btn-primary" onclick="revisarYCerrarActa()">Revisar y cerrar acta</button>
+              <button type="button" class="btn btn-ghost" onclick="goDocente('panel')">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ============== ASISTENCIAS ============== -->
+        <div class="screen-step" id="docente-asistencia" data-screen-d="asistencia">
+          <h1 class="page-title">Asistencias</h1>
+          <p class="page-subtitle">Registrá la asistencia de la clase de hoy.</p>
+
+          <div class="context-bar" role="region" aria-label="Contexto de asistencia">
+            <div><strong>Fecha:</strong> Lun 20/05/2026</div>
+            <div><strong>Materia:</strong> Interacción Usuario Máquina</div>
+            <div><strong>Comisión:</strong> A · Turno Noche</div>
+          </div>
+
+          <form id="form-asistencia">
+            <div class="table-wrap">
+              <table class="data" aria-label="Asistencia de alumnos">
+                <thead>
+                  <tr>
+                    <th scope="col">Legajo</th>
+                    <th scope="col">Alumno</th>
+                    <th scope="col" style="min-width:260px;">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-asistencia-body">
+                  <!-- Generado por JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="btn-row mt-2">
+              <button type="button" class="btn btn-primary" onclick="guardarAsistencia()">Guardar</button>
+              <button type="button" class="btn btn-secondary" onclick="marcarTodosPresentes()">Marcar todos presentes</button>
+              <button type="button" class="btn btn-ghost" onclick="goDocente('panel')">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ============== AYUDA TEÓRICA ============== -->
+        <div class="screen-step" id="docente-ayuda" data-screen-d="ayuda">
+          <h1 class="page-title">Criterios de diseño aplicados</h1>
+          <p class="page-subtitle">Esta sección documenta el marco teórico que guía el prototipo, para usarla durante la defensa.</p>
+
+          <div class="theory-grid">
+            <div class="theory-card">
+              <h3><span class="tag">DCU</span> Diseño Centrado en el Usuario</h3>
+              <p class="text-muted" style="margin:0;">Las funciones se priorizan según las tareas reales de cada rol.</p>
+              <ul>
+                <li>Alumno: inscribirse, ver notas y calendario al inicio.</li>
+                <li>Docente: cargar notas y asistencias desde el panel.</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">Rams</span> "Menos, pero mejor"</h3>
+              <p class="text-muted" style="margin:0;">Bauhaus: la forma sigue a la función.</p>
+              <ul>
+                <li>Paleta sobria y tipografía del sistema.</li>
+                <li>Sin íconos decorativos ni sombras agresivas.</li>
+                <li>Cada componente cumple un rol claro.</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">Shneiderman</span> 8 reglas de oro</h3>
+              <ul>
+                <li>Consistencia visual y de patrones.</li>
+                <li>Atajos: accesos rápidos y menú lateral.</li>
+                <li>Feedback inmediato (toasts, badges).</li>
+                <li>Cierre claro de secuencias (stepper).</li>
+                <li>Prevención de errores (rango 1-10).</li>
+                <li>Volver/cancelar siempre disponible.</li>
+                <li>Control del usuario sobre el sistema.</li>
+                <li>Reducción de memoria de corto plazo (contexto visible).</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">M-L-P</span> Miro / Leo / Pienso</h3>
+              <ul>
+                <li><strong>Miro:</strong> tareas cotidianas al golpe de vista en el home.</li>
+                <li><strong>Leo:</strong> textos autoexplicativos solo cuando suman.</li>
+                <li><strong>Pienso:</strong> modal de confirmación antes de cerrar acta o inscribirse.</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">A11y</span> Usabilidad y Accesibilidad</h3>
+              <ul>
+                <li>Contraste alto y jerarquía visual.</li>
+                <li>Foco visible y navegación por teclado.</li>
+                <li>Labels asociados y mensajes no dependientes del color.</li>
+                <li>Botones táctiles ≥ 44px en mobile.</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">Líquidas</span> Interfaces líquidas</h3>
+              <p class="text-muted" style="margin:0;">Misma identidad visual adaptada a cada dispositivo.</p>
+              <ul>
+                <li>Alumno: contenedor mobile vertical.</li>
+                <li>Docente: panel amplio con menú lateral.</li>
+                <li>Tablas con scroll horizontal en pantallas chicas.</li>
+              </ul>
+            </div>
+
+            <div class="theory-card">
+              <h3><span class="tag">Norman / Kano</span> Confianza y prioridades</h3>
+              <ul>
+                <li>Simplicidad que genera confianza.</li>
+                <li>Confirmaciones explícitas en acciones críticas.</li>
+                <li>Se priorizan funciones <em>imprescindibles</em> (Kano básicas) sobre las accesorias.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.desktop-content -->
+    </div><!-- /.desktop-stage -->
+  </section>
+
+</main>
+
+<!-- =============================================================
+     MODALES GLOBALES
+     - Confirmación crítica (Miro-Leo-Pienso).
+     - Cancelables con botón y con tecla Escape.
+     ============================================================= -->
+
+<!-- Modal: confirmar inscripción -->
+<div class="modal-backdrop" id="modal-confirmar-inscripcion" role="dialog" aria-modal="true" aria-labelledby="m1-title" aria-describedby="m1-desc">
+  <div class="modal">
+    <h3 id="m1-title">¿Confirmás la inscripción?</h3>
+    <p id="m1-desc">Una vez confirmada, tu cupo quedará reservado en <strong id="modal-materia">Bases de Datos II</strong>. Podés desinscribirte luego desde "Mis inscripciones".</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-confirmar-inscripcion')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarInscripcion()">Sí, confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: cerrar acta -->
+<div class="modal-backdrop" id="modal-cerrar-acta" role="dialog" aria-modal="true" aria-labelledby="m2-title" aria-describedby="m2-desc">
+  <div class="modal">
+    <h3 id="m2-title">¿Cerrar el acta de notas?</h3>
+    <p id="m2-desc">Una vez cerrada el acta, no podrás modificar las notas sin pedir reapertura. Esta acción es definitiva.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-cerrar-acta')">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarCierreActa()">Sí, cerrar acta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de toasts (feedback) -->
+<div class="toast-wrap" id="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+/* =====================================================================
+   Campus Simple - JS vanilla
+   Navegación entre vistas y pantallas + interacciones del prototipo.
+   Toda la lógica está comentada con la regla teórica que respalda la decisión.
+   ===================================================================== */
+
+// ---------- Datos mockeados ----------
+const ALUMNOS = [
+  { legajo: 'A-1024', nombre: 'Acuña, Lucía' },
+  { legajo: 'A-1031', nombre: 'Benítez, Tomás' },
+  { legajo: 'A-1045', nombre: 'Castro, Mariana' },
+  { legajo: 'A-1058', nombre: 'Domínguez, Pablo' },
+  { legajo: 'A-1064', nombre: 'Estévez, Sol' },
+  { legajo: 'A-1077', nombre: 'Fernández, Iván' },
+  { legajo: 'A-1089', nombre: 'García, Camila' },
+  { legajo: 'A-1092', nombre: 'Herrera, Bruno' }
+];
+
+// Estado del prototipo
+let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada' };
+
+// ---------- Cambio de vista (Alumno / Docente) ----------
+// Shneiderman: control del usuario. Interfaces líquidas: misma identidad, diferente layout.
+const btnVistaAlumno  = document.getElementById('btn-vista-alumno');
+const btnVistaDocente = document.getElementById('btn-vista-docente');
+const viewAlumno  = document.getElementById('view-alumno');
+const viewDocente = document.getElementById('view-docente');
+const rolSelect   = document.getElementById('rol-select');
+
+function setVista(vista) {
+  const esAlumno = vista === 'alumno';
+  viewAlumno.classList.toggle('active', esAlumno);
+  viewDocente.classList.toggle('active', !esAlumno);
+  btnVistaAlumno.setAttribute('aria-pressed',  esAlumno ? 'true' : 'false');
+  btnVistaDocente.setAttribute('aria-pressed', esAlumno ? 'false' : 'true');
+  rolSelect.value = esAlumno ? 'alumno' : 'docente';
+}
+btnVistaAlumno.addEventListener('click',  () => setVista('alumno'));
+btnVistaDocente.addEventListener('click', () => setVista('docente'));
+rolSelect.addEventListener('change', (e) => setVista(e.target.value));
+
+// ---------- Navegación entre pantallas del alumno ----------
+function goAlumno(screen) {
+  document.querySelectorAll('#view-alumno .screen-step').forEach(el => {
+    el.classList.toggle('active', el.dataset.screen === screen);
+  });
+  // Llevar el scroll al inicio de la "pantalla" mobile (cierre claro de secuencia)
+  const phoneBody = document.querySelector('#view-alumno .screen-step.active .screen-body');
+  if (phoneBody) phoneBody.scrollTop = 0;
+}
+
+// ---------- Navegación entre pantallas del docente ----------
+function goDocente(screen) {
+  document.querySelectorAll('#view-docente .screen-step').forEach(el => {
+    el.classList.toggle('active', el.dataset.screenD === screen);
+  });
+  document.querySelectorAll('.sidebar nav button').forEach(btn => {
+    btn.setAttribute('aria-current', btn.dataset.docenteTarget === screen ? 'page' : 'false');
+  });
+}
+
+// ---------- Login (validación accesible, no destruye datos ante error) ----------
+document.getElementById('form-login').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const usuario = document.getElementById('login-usuario');
+  const pass    = document.getElementById('login-pass');
+  let ok = true;
+
+  // Prevención de errores Shneiderman: no se borran los datos del usuario.
+  [usuario, pass].forEach(input => {
+    const field = input.closest('.form-field');
+    if (!input.value.trim() || (input.id === 'login-pass' && input.value.length < 4)) {
+      field.classList.add('invalid');
+      input.setAttribute('aria-invalid', 'true');
+      ok = false;
+    } else {
+      field.classList.remove('invalid');
+      input.removeAttribute('aria-invalid');
+    }
+  });
+
+  if (!ok) {
+    showToast('Revisá los campos marcados.', 'error');
+    return;
+  }
+  showToast('Bienvenida, Lucía.', 'success');
+  goAlumno('home');
+});
+
+// ---------- Logout alumno ----------
+// Shneiderman: control del usuario - puede cerrar sesión cuando quiera.
+// Norman/Kano: feedback de confirmación claro tras la acción.
+function logoutAlumno() {
+  goAlumno('login');
+  showToast('Cerraste sesión correctamente.', 'success');
+}
+
+// ---------- Login / Logout docente ----------
+const docenteLoginStage = document.getElementById('docente-login-stage');
+const docenteAppStage   = document.getElementById('docente-app-stage');
+
+function mostrarLoginDocente() {
+  docenteLoginStage.classList.add('active');
+  docenteAppStage.style.display = 'none';
+}
+function mostrarAppDocente() {
+  docenteLoginStage.classList.remove('active');
+  docenteAppStage.style.display = '';
+  goDocente('panel');
+}
+
+document.getElementById('form-login-docente').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const usuario = document.getElementById('login-docente-usuario');
+  const pass    = document.getElementById('login-docente-pass');
+  let ok = true;
+
+  // Prevención de errores Shneiderman: no se borran los datos cargados.
+  [usuario, pass].forEach(input => {
+    const field = input.closest('.form-field');
+    if (!input.value.trim() || (input.id === 'login-docente-pass' && input.value.length < 4)) {
+      field.classList.add('invalid');
+      input.setAttribute('aria-invalid', 'true');
+      ok = false;
+    } else {
+      field.classList.remove('invalid');
+      input.removeAttribute('aria-invalid');
+    }
+  });
+
+  if (!ok) {
+    showToast('Revisá los campos marcados.', 'error');
+    return;
+  }
+  mostrarAppDocente();
+  showToast('Bienvenido, Prof. Díaz.', 'success');
+});
+
+function logoutDocente() {
+  mostrarLoginDocente();
+  showToast('Cerraste sesión correctamente.', 'success');
+}
+
+// ---------- Flujo de inscripción ----------
+function seleccionarMateria(nombre, tipo) {
+  materiaSeleccionada = { nombre, tipo };
+  document.getElementById('resumen-materia').textContent = nombre;
+  document.getElementById('resumen-tipo').textContent    = tipo + ' · Comisión A';
+  document.getElementById('confirm-materia').textContent = nombre;
+  document.getElementById('confirm-tipo').textContent    = tipo;
+  document.getElementById('modal-materia').textContent   = nombre;
+  document.getElementById('ok-materia').textContent      = nombre;
+  document.getElementById('ok-tipo').textContent         = tipo;
+  goAlumno('inscripcion-paso2');
+}
+
+function confirmarInscripcion() {
+  cerrarModal('modal-confirmar-inscripcion');
+  goAlumno('inscripcion-ok');
+  showToast('Inscripción confirmada.', 'success');
+}
+
+// ---------- Filtro de notas ----------
+function filtrarNotas() {
+  const valor = document.getElementById('filtro-periodo').value;
+  document.querySelectorAll('#notas-lista .list-item').forEach(item => {
+    item.style.display = (valor === 'todos' || item.dataset.periodo === valor) ? '' : 'none';
+  });
+}
+
+// ---------- Render tabla de notas (docente) ----------
+// Shneiderman: prevención de errores - inputs limitados de 1 a 10.
+function renderTablaNotas() {
+  const tbody = document.getElementById('tabla-notas-body');
+  const notasIniciales = { 'A-1024': 9, 'A-1031': 7, 'A-1045': '', 'A-1058': 6, 'A-1064': 10, 'A-1077': 8, 'A-1089': '', 'A-1092': 5 };
+  tbody.innerHTML = ALUMNOS.map(a => `
+    <tr>
+      <td>${a.legajo}</td>
+      <td>${a.nombre}</td>
+      <td>
+        <input type="number" min="1" max="10" step="1"
+               aria-label="Nota de ${a.nombre} (1 a 10)"
+               value="${notasIniciales[a.legajo] ?? ''}"
+               oninput="validarNotaInput(this)" />
+      </td>
+      <td><span class="badge ${notasIniciales[a.legajo] ? (notasIniciales[a.legajo] >= 7 ? 'badge-ok' : 'badge-info') : 'badge-warn'}">
+        ${notasIniciales[a.legajo] ? (notasIniciales[a.legajo] >= 7 ? 'Promociona' : 'Regular') : 'Pendiente'}
+      </span></td>
+    </tr>
+  `).join('');
+}
+
+// Validación en vivo: no permite texto ni valores fuera de rango
+function validarNotaInput(input) {
+  const valor = input.value;
+  // Permite vacío (estado pendiente)
+  if (valor === '') {
+    input.removeAttribute('aria-invalid');
+    actualizarEstadoFila(input, null);
+    return;
+  }
+  const num = Number(valor);
+  if (!Number.isInteger(num) || num < 1 || num > 10) {
+    input.setAttribute('aria-invalid', 'true');
+    actualizarEstadoFila(input, 'error');
+  } else {
+    input.removeAttribute('aria-invalid');
+    actualizarEstadoFila(input, num);
+  }
+}
+
+function actualizarEstadoFila(input, valor) {
+  const badge = input.closest('tr').querySelector('.badge');
+  if (!badge) return;
+  badge.className = 'badge';
+  if (valor === null) {
+    badge.classList.add('badge-warn');
+    badge.textContent = 'Pendiente';
+  } else if (valor === 'error') {
+    badge.classList.add('badge-error');
+    badge.textContent = 'Valor inválido';
+  } else if (valor >= 7) {
+    badge.classList.add('badge-ok');
+    badge.textContent = 'Promociona';
+  } else {
+    badge.classList.add('badge-info');
+    badge.textContent = 'Regular';
+  }
+}
+
+function guardarBorradorNotas() {
+  // Feedback inmediato (Shneiderman). No se cierra el acta: el usuario sigue en control.
+  showToast('Borrador guardado correctamente.', 'success');
+}
+
+function revisarYCerrarActa() {
+  // Antes de cerrar, validamos que no haya inputs inválidos (prevención de errores).
+  const invalidos = document.querySelectorAll('#tabla-notas-body input[aria-invalid="true"]');
+  if (invalidos.length > 0) {
+    showToast('Hay ' + invalidos.length + ' notas fuera de rango. Corregilas antes de cerrar.', 'error');
+    invalidos[0].focus();
+    return;
+  }
+  abrirModal('modal-cerrar-acta');
+}
+
+function confirmarCierreActa() {
+  cerrarModal('modal-cerrar-acta');
+  showToast('Acta cerrada y enviada a Bedelía.', 'success');
+  // Cambiamos el badge de estado en el contexto (feedback visual)
+  const ctxBadge = document.querySelector('#docente-notas .context-bar .badge');
+  if (ctxBadge) {
+    ctxBadge.className = 'badge badge-ok';
+    ctxBadge.textContent = 'Cerrada';
+  }
+}
+
+// ---------- Render tabla de asistencia ----------
+function renderTablaAsistencia() {
+  const tbody = document.getElementById('tabla-asistencia-body');
+  tbody.innerHTML = ALUMNOS.map((a, idx) => {
+    const name = 'asis-' + a.legajo;
+    return `
+      <tr>
+        <td>${a.legajo}</td>
+        <td>${a.nombre}</td>
+        <td>
+          <div class="attendance-options" role="radiogroup" aria-label="Asistencia de ${a.nombre}">
+            <label class="presente ${idx % 4 !== 3 ? 'selected' : ''}">
+              <input type="radio" name="${name}" value="presente" ${idx % 4 !== 3 ? 'checked' : ''}
+                     onchange="marcarAsistencia(this)" />
+              <span>● Presente</span>
+            </label>
+            <label class="ausente ${idx % 4 === 3 ? 'selected' : ''}">
+              <input type="radio" name="${name}" value="ausente" ${idx % 4 === 3 ? 'checked' : ''}
+                     onchange="marcarAsistencia(this)" />
+              <span>✕ Ausente</span>
+            </label>
+            <label class="tarde">
+              <input type="radio" name="${name}" value="tarde"
+                     onchange="marcarAsistencia(this)" />
+              <span>◐ Tarde</span>
+            </label>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function marcarAsistencia(input) {
+  // Resaltado visual no dependiente sólo del color (texto + ícono + clase).
+  const group = input.closest('.attendance-options');
+  group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+  input.closest('label').classList.add('selected');
+}
+
+function guardarAsistencia() {
+  showToast('Asistencia guardada para la clase de hoy.', 'success');
+}
+
+function marcarTodosPresentes() {
+  document.querySelectorAll('#tabla-asistencia-body .attendance-options').forEach(group => {
+    const presente = group.querySelector('input[value="presente"]');
+    presente.checked = true;
+    group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+    presente.closest('label').classList.add('selected');
+  });
+  showToast('Todos marcados como presentes. Podés ajustar los casos puntuales.', 'success');
+}
+
+// ---------- Modales ----------
+// Shneiderman: cancelable con botón y con Escape (control del usuario).
+function abrirModal(id) {
+  const modal = document.getElementById(id);
+  modal.classList.add('open');
+  // Foco al primer botón de acción para accesibilidad por teclado.
+  const firstBtn = modal.querySelector('.btn-primary, .btn-danger, .btn-secondary, button');
+  if (firstBtn) firstBtn.focus();
+}
+
+function cerrarModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Cerrar modales con tecla Escape (regla de accesibilidad + Shneiderman).
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+// Cerrar modal al hacer click fuera del contenido
+document.querySelectorAll('.modal-backdrop').forEach(bg => {
+  bg.addEventListener('click', (e) => {
+    if (e.target === bg) bg.classList.remove('open');
+  });
+});
+
+// ---------- Toasts ----------
+// Feedback inmediato del sistema (Shneiderman).
+function showToast(msg, type) {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || '');
+  t.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity 0.3s';
+    setTimeout(() => t.remove(), 320);
+  }, 2800);
+}
+
+// ---------- Inicialización ----------
+renderTablaNotas();
+renderTablaAsistencia();
+</script>
+
+</body>
+</html>
