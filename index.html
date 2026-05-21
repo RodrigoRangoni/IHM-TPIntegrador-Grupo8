@@ -463,6 +463,48 @@
   }
   .form-field.invalid .field-error { display: block; }
 
+  /* Segmented control para filtrar contenido (Materias / Mesas).
+     Patrón consistente con el resto del sistema: bordes redondeados sutiles,
+     estado activo en blanco con sombra leve, accesible vía ARIA tabs. */
+  .filter-tabs {
+    display: flex;
+    background: var(--gris-fondo);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-s);
+    padding: 3px;
+    margin-bottom: 12px;
+    gap: 2px;
+  }
+  .filter-tabs button {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: var(--fs-s);
+    color: var(--gris-texto);
+    font-weight: 600;
+    min-height: 36px;
+  }
+  .filter-tabs button:hover { background: rgba(255,255,255,0.6); color: var(--azul-profundo); }
+  .filter-tabs button[aria-selected="true"] {
+    background: var(--blanco);
+    color: var(--azul-profundo);
+    box-shadow: var(--sombra-1);
+  }
+
+  /* Estado "no hay resultados" para los filtros */
+  .empty-state {
+    text-align: center;
+    padding: 24px 12px;
+    color: var(--gris-texto);
+    font-size: var(--fs-s);
+    border: 1px dashed var(--gris-borde);
+    border-radius: var(--radio-m);
+    background: var(--blanco);
+  }
+
   /* Campo con toggle de visibilidad (mostrar/ocultar contraseña).
      Mejora de accesibilidad: el usuario puede verificar lo que tipea sin
      reescribirlo. aria-pressed indica el estado actual del botón a lectores
@@ -1176,35 +1218,63 @@
                 <div class="step">3. Confirmar</div>
               </div>
 
-              <p class="text-muted" style="margin-top:0;">Seleccioná una materia o examen disponible.</p>
+              <p class="text-muted" style="margin-top:0;">Filtrá por tipo y elegí una opción disponible.</p>
 
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Bases de Datos II</p>
-                  <p class="li-sub">Cursada · Comisión A · Cupo 12/30</p>
-                </div>
-                <button class="btn btn-secondary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada')">Elegir</button>
+              <!-- Filtro segmentado (DCU: el alumno tiene objetivos diferentes
+                   según busque cursar o rendir un final). -->
+              <div class="filter-tabs" role="tablist" aria-label="Filtrar inscripciones por tipo">
+                <button role="tab" aria-selected="true" data-filtro="todos"
+                        onclick="filtrarInscripcion(this, 'mobile')">Todas</button>
+                <button role="tab" aria-selected="false" data-filtro="cursada"
+                        onclick="filtrarInscripcion(this, 'mobile')">Materias</button>
+                <button role="tab" aria-selected="false" data-filtro="final"
+                        onclick="filtrarInscripcion(this, 'mobile')">Mesas</button>
               </div>
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Sistemas Operativos</p>
-                  <p class="li-sub">Final · Mesa 28/05 · 20:00</p>
+
+              <div id="lista-inscripcion-mobile">
+                <div class="list-item" data-tipo="cursada">
+                  <div>
+                    <p class="li-title">Bases de Datos II</p>
+                    <p class="li-sub">Comisión A · Cupo 12/30</p>
+                    <span class="badge badge-info" style="margin-top:6px;">Cursada</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada')">Elegir</button>
                 </div>
-                <button class="btn btn-secondary" onclick="seleccionarMateria('Sistemas Operativos', 'Final')">Elegir</button>
-              </div>
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Estadística Aplicada</p>
-                  <p class="li-sub">Cursada · Comisión C · Cupo 28/30</p>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Sistemas Operativos</p>
+                    <p class="li-sub">Mesa 28/05 · 20:00 · Aula 207</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="seleccionarMateria('Sistemas Operativos', 'Final')">Elegir mesa</button>
                 </div>
-                <button class="btn btn-secondary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada')">Elegir</button>
-              </div>
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Inglés Técnico</p>
-                  <p class="li-sub">Final · Mesa 02/06 · 19:00</p>
+                <div class="list-item" data-tipo="cursada">
+                  <div>
+                    <p class="li-title">Estadística Aplicada</p>
+                    <p class="li-sub">Comisión C · Cupo 28/30</p>
+                    <span class="badge badge-info" style="margin-top:6px;">Cursada</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada')">Elegir</button>
                 </div>
-                <button class="btn btn-secondary" onclick="seleccionarMateria('Inglés Técnico', 'Final')">Elegir</button>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Inglés Técnico</p>
+                    <p class="li-sub">Mesa 02/06 · 19:00 · Aula 102</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="seleccionarMateria('Inglés Técnico', 'Final')">Elegir mesa</button>
+                </div>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Matemática Discreta</p>
+                    <p class="li-sub">Mesa 05/06 · 18:30 · Aula 308</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="seleccionarMateria('Matemática Discreta', 'Final')">Elegir mesa</button>
+                </div>
+                <div class="empty-state" id="empty-inscripcion-mobile" style="display:none;">
+                  No hay opciones disponibles para este filtro.
+                </div>
               </div>
             </div>
 
@@ -1571,26 +1641,61 @@
           <div id="web-inscripcion-contenido">
 
             <div id="web-ins-p1" class="web-step-sub">
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Bases de Datos II</p>
-                  <p class="li-sub">Cursada · Comisión A · Cupos libres: 18</p>
-                </div>
-                <button class="btn btn-primary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada', 'web')">Elegir materia</button>
+
+              <!-- Filtro segmentado (consistencia con la vista mobile). -->
+              <div class="filter-tabs" role="tablist" aria-label="Filtrar inscripciones por tipo" style="max-width:380px;">
+                <button role="tab" aria-selected="true" data-filtro="todos"
+                        onclick="filtrarInscripcion(this, 'web')">Todas</button>
+                <button role="tab" aria-selected="false" data-filtro="cursada"
+                        onclick="filtrarInscripcion(this, 'web')">Materias</button>
+                <button role="tab" aria-selected="false" data-filtro="final"
+                        onclick="filtrarInscripcion(this, 'web')">Mesas</button>
               </div>
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Sistemas Operativos</p>
-                  <p class="li-sub">Examen final · Mesa 28/05 · 20:00</p>
+
+              <div id="lista-inscripcion-web">
+                <div class="list-item" data-tipo="cursada">
+                  <div>
+                    <p class="li-title">Bases de Datos II</p>
+                    <p class="li-sub">Comisión A · Cupos libres: 18</p>
+                    <span class="badge badge-info" style="margin-top:6px;">Cursada</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada', 'web')">Elegir materia</button>
                 </div>
-                <button class="btn btn-primary" onclick="seleccionarMateria('Sistemas Operativos', 'Final', 'web')">Elegir mesa</button>
-              </div>
-              <div class="list-item">
-                <div>
-                  <p class="li-title">Estadística Aplicada</p>
-                  <p class="li-sub">Cursada · Comisión C · Cupos libres: 2</p>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Sistemas Operativos</p>
+                    <p class="li-sub">Mesa 28/05 · 20:00 · Aula 207</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="seleccionarMateria('Sistemas Operativos', 'Final', 'web')">Elegir mesa</button>
                 </div>
-                <button class="btn btn-primary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada', 'web')">Elegir materia</button>
+                <div class="list-item" data-tipo="cursada">
+                  <div>
+                    <p class="li-title">Estadística Aplicada</p>
+                    <p class="li-sub">Comisión C · Cupos libres: 2</p>
+                    <span class="badge badge-info" style="margin-top:6px;">Cursada</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada', 'web')">Elegir materia</button>
+                </div>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Inglés Técnico</p>
+                    <p class="li-sub">Mesa 02/06 · 19:00 · Aula 102</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="seleccionarMateria('Inglés Técnico', 'Final', 'web')">Elegir mesa</button>
+                </div>
+                <div class="list-item" data-tipo="final">
+                  <div>
+                    <p class="li-title">Matemática Discreta</p>
+                    <p class="li-sub">Mesa 05/06 · 18:30 · Aula 308</p>
+                    <span class="badge badge-warn" style="margin-top:6px;">Mesa de examen</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="seleccionarMateria('Matemática Discreta', 'Final', 'web')">Elegir mesa</button>
+                </div>
+                <div class="empty-state" id="empty-inscripcion-web" style="display:none;">
+                  No hay opciones disponibles para este filtro.
+                </div>
               </div>
             </div>
 
@@ -2142,6 +2247,33 @@ document.getElementById('form-login').addEventListener('submit', (e) => {
 // ---------- Logout alumno ----------
 // Shneiderman: control del usuario - puede cerrar sesión cuando quiera.
 // Norman/Kano: feedback de confirmación claro tras la acción.
+// ---------- Filtro segmentado de inscripciones (Materias / Mesas) ----------
+// Shneiderman: control del usuario + consistencia entre vistas.
+// DCU: el alumno tiene objetivos distintos (cursar vs rendir final),
+// el filtro le permite enfocarse rápido en lo que busca.
+function filtrarInscripcion(btn, ambito) {
+  const tipo = btn.dataset.filtro;
+
+  // Actualiza el estado del segmented control (sólo un tab activo a la vez).
+  btn.parentElement.querySelectorAll('button').forEach(b => {
+    b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+  });
+
+  const rootId  = ambito === 'web' ? 'lista-inscripcion-web' : 'lista-inscripcion-mobile';
+  const emptyId = ambito === 'web' ? 'empty-inscripcion-web' : 'empty-inscripcion-mobile';
+  const root  = document.getElementById(rootId);
+  const empty = document.getElementById(emptyId);
+  if (!root) return;
+
+  let visibles = 0;
+  root.querySelectorAll('.list-item[data-tipo]').forEach(item => {
+    const coincide = (tipo === 'todos' || item.dataset.tipo === tipo);
+    item.style.display = coincide ? '' : 'none';
+    if (coincide) visibles++;
+  });
+  if (empty) empty.style.display = visibles === 0 ? 'block' : 'none';
+}
+
 // ---------- Toggle de visibilidad de contraseña ----------
 // Accesibilidad: el usuario puede verificar lo que tipea. aria-pressed,
 // aria-label y title se actualizan para soporte de lectores de pantalla.
