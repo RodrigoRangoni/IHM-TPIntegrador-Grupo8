@@ -2443,6 +2443,8 @@ function seleccionarMateria(nombre, tipo, origen) {
 }
 
 // Cambio de paso en el flujo de inscripción web (1, 2 ó 3).
+// Lleva el scroll al inicio del bloque para que el usuario vea el cambio
+// aunque su viewport estuviera scrolleado más abajo en el paso anterior.
 function cambiarPasoInscripcionWeb(paso) {
   const p1 = document.getElementById('web-ins-p1');
   const p2 = document.getElementById('web-ins-p2');
@@ -2455,10 +2457,18 @@ function cambiarPasoInscripcionWeb(paso) {
   document.getElementById('w-step-1').className = paso === 1 ? 'step active' : 'step done';
   document.getElementById('w-step-2').className = paso === 2 ? 'step active' : (paso > 2 ? 'step done' : 'step');
   document.getElementById('w-step-3').className = paso === 3 ? 'step active' : 'step';
+
+  // Cierre claro de secuencia (Shneiderman): asegurar que el nuevo paso quede
+  // visible aunque el usuario tuviera scroll hacia abajo.
+  const stepper = document.getElementById('web-stepper');
+  if (stepper && stepper.scrollIntoView) {
+    stepper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function confirmarInscripcion() {
-  cerrarModal('modal-confirmar-inscripcion');
+  // Cambiar el paso ANTES de cerrar el modal para que ningún side-effect del
+  // cierre (focus, re-render) pueda interferir con la actualización del flujo.
   if (materiaSeleccionada.origen === 'web') {
     const okWeb = document.getElementById('web-materia-ok');
     if (okWeb) okWeb.textContent = materiaSeleccionada.nombre;
@@ -2466,6 +2476,7 @@ function confirmarInscripcion() {
   } else {
     goAlumno('inscripcion-ok');
   }
+  cerrarModal('modal-confirmar-inscripcion');
   showToast('Inscripción confirmada.', 'success');
 }
 
