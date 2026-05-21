@@ -1287,7 +1287,9 @@
           </div>
 
           <!-- ============== PANTALLA 3.2: INSCRIPCIÓN - PASO 2 (REVISAR) ============== -->
-          <!-- Reducción de memoria: muestra resumen antes de confirmar. -->
+          <!-- Reducción de memoria: muestra resumen antes de confirmar.
+               Contenido inyectado por JS desde OFERTA_ACADEMICA para mantener
+               consistencia exacta con la vista Web Alumno. -->
           <div class="screen-step" id="alumno-inscripcion-paso2" data-screen="inscripcion-paso2">
             <div class="screen-header">
               <button class="back-btn" aria-label="Volver al paso anterior" onclick="goAlumno('inscripcion-paso1')">←</button>
@@ -1310,61 +1312,21 @@
               </div>
 
               <div class="card">
-                <h3 class="card-title" id="resumen-materia">Bases de Datos II</h3>
-                <p class="card-meta" id="resumen-tipo">Cursada · Comisión A</p>
+                <h3 class="card-title" id="resumen-mobile-titulo">Materia seleccionada</h3>
+                <p class="card-meta" id="resumen-mobile-tipo">—</p>
                 <hr class="hr" />
-                <p style="margin:6px 0;"><strong>Horario:</strong> Mar y Jue · 18:30 a 21:30</p>
-                <p style="margin:6px 0;"><strong>Aula:</strong> 207</p>
-                <p style="margin:6px 0;"><strong>Cupo:</strong> 12 / 30</p>
-                <p style="margin:6px 0;"><strong>Requisitos:</strong> Bases de Datos I aprobada</p>
+                <div id="resumen-mobile-detalles">
+                  <!-- Datos inyectados por renderResumenInscripcion() -->
+                </div>
               </div>
 
-              <div class="alert alert-info" style="margin-top:14px;" role="note">
+              <div class="alert alert-info" id="resumen-mobile-correlativas" style="margin-top:14px;" role="note">
                 <span class="alert-icon" aria-hidden="true">ⓘ</span>
-                <div>Verificamos que cumplís con los requisitos. Si algo no es correcto, podés volver atrás.</div>
+                <div>Cumplís con los requisitos. Si algo no es correcto, podés volver atrás.</div>
               </div>
 
               <div class="btn-row" style="margin-top:16px;">
                 <button class="btn btn-secondary" onclick="goAlumno('inscripcion-paso1')">Volver</button>
-                <button class="btn btn-primary" onclick="goAlumno('inscripcion-paso3')">Continuar</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- ============== PANTALLA 3.3: INSCRIPCIÓN - PASO 3 (CONFIRMAR) ============== -->
-          <!-- Miro-Leo-Pienso: modal obliga a "pensar" antes de confirmar. -->
-          <div class="screen-step" id="alumno-inscripcion-paso3" data-screen="inscripcion-paso3">
-            <div class="screen-header">
-              <button class="back-btn" aria-label="Volver al paso anterior" onclick="goAlumno('inscripcion-paso2')">←</button>
-              <h1>Confirmar</h1>
-              <button class="logout-icon-btn" onclick="logoutAlumno()" aria-label="Cerrar sesión" title="Cerrar sesión">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <polyline points="16 17 21 12 16 7"/>
-                  <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-              </button>
-            </div>
-            <div class="screen-body">
-              <div class="stepper" aria-label="Pasos del proceso de inscripción">
-                <div class="step done">1. Elegir</div>
-                <div class="step done">2. Revisar</div>
-                <div class="step active">3. Confirmar</div>
-              </div>
-
-              <div class="card">
-                <h3 class="card-title">Listo para inscribirte</h3>
-                <p class="card-meta">
-                  <span id="confirm-materia">Bases de Datos II</span> ·
-                  <span id="confirm-tipo">Cursada</span>
-                </p>
-                <p style="margin-top:8px;">Una vez confirmada, la inscripción quedará registrada y recibirás un comprobante.</p>
-              </div>
-
-              <div class="btn-row" style="margin-top:16px;">
-                <button class="btn btn-secondary" onclick="goAlumno('inscripcion-paso2')">Volver</button>
                 <button class="btn btn-primary" onclick="abrirModal('modal-confirmar-inscripcion')">Confirmar inscripción</button>
               </div>
             </div>
@@ -1392,7 +1354,7 @@
                 <p class="text-muted" style="margin:0;">N° de comprobante: <strong>CS-2026-0427</strong></p>
                 <hr class="hr" />
                 <p style="margin:6px 0;"><strong id="ok-materia">Bases de Datos II</strong></p>
-                <p class="text-muted" style="margin:0;"><span id="ok-tipo">Cursada</span> · Comisión A</p>
+                <p class="text-muted" style="margin:0;" id="ok-tipo">Cursada · Comisión A</p>
                 <p class="text-muted" style="margin:6px 0 0;">Guardalo o consultalo desde "Mis inscripciones".</p>
               </div>
 
@@ -1632,10 +1594,11 @@
           <h1 class="page-title">Inscripción a materias y exámenes</h1>
           <p class="page-subtitle">Seleccioná la comisión que se adapte a tus horarios.</p>
 
+          <!-- Stepper unificado con la vista mobile: mismos rótulos y misma cantidad de pasos. -->
           <div class="stepper" id="web-stepper" aria-label="Pasos de la inscripción">
-            <div class="step active" id="w-step-1">1. Seleccionar asignatura</div>
-            <div class="step" id="w-step-2">2. Controlar datos</div>
-            <div class="step" id="w-step-3">3. Finalizar</div>
+            <div class="step active" id="w-step-1">1. Elegir</div>
+            <div class="step" id="w-step-2">2. Revisar</div>
+            <div class="step" id="w-step-3">3. Confirmar</div>
           </div>
 
           <div id="web-inscripcion-contenido">
@@ -1699,22 +1662,26 @@
               </div>
             </div>
 
+            <!-- Card unificada con la vista mobile: misma estructura e IDs paralelos
+                 para que renderResumenInscripcion() pinte el mismo contenido en ambas. -->
             <div id="web-ins-p2" class="web-step-sub" style="display:none;">
               <div class="card">
-                <h3 class="card-title resumen-materia-web">Materia seleccionada</h3>
-                <p class="card-meta"><strong>Régimen:</strong> Cuatrimestral · <strong>Aula:</strong> 207</p>
+                <h3 class="card-title" id="resumen-web-titulo">Materia seleccionada</h3>
+                <p class="card-meta" id="resumen-web-tipo">—</p>
                 <hr class="hr" />
-                <p style="margin:6px 0;"><strong>Horario:</strong> Mar y Jue · 18:30 a 21:30</p>
-                <p style="margin:6px 0;"><strong>Cupo:</strong> 12 / 30</p>
-                <p style="margin:6px 0;"><strong>Requisitos:</strong> Bases de Datos I aprobada</p>
-                <div class="alert alert-info mt-2" role="note">
-                  <span class="alert-icon" aria-hidden="true">ⓘ</span>
-                  <div>Cumplís con las correlativas para cursar.</div>
+                <div id="resumen-web-detalles">
+                  <!-- Datos inyectados por renderResumenInscripcion() -->
                 </div>
               </div>
+
+              <div class="alert alert-info mt-2" id="resumen-web-correlativas" role="note">
+                <span class="alert-icon" aria-hidden="true">ⓘ</span>
+                <div>Cumplís con los requisitos. Si algo no es correcto, podés volver atrás.</div>
+              </div>
+
               <div class="btn-row mt-2">
                 <button class="btn btn-secondary" onclick="cambiarPasoInscripcionWeb(1)">Volver</button>
-                <button class="btn btn-primary" onclick="abrirModal('modal-confirmar-inscripcion')">Confirmar mi cupo</button>
+                <button class="btn btn-primary" onclick="abrirModal('modal-confirmar-inscripcion')">Confirmar inscripción</button>
               </div>
             </div>
 
@@ -2157,6 +2124,56 @@ const ALUMNOS = [
 // el flujo de inscripción en ambas vistas (interfaces líquidas + DCU).
 let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada', origen: 'mobile' };
 
+// Oferta académica: única fuente de verdad para el paso 2 de inscripción.
+// Mantiene la vista mobile y la web sincronizadas (DRY + consistencia).
+const OFERTA_ACADEMICA = {
+  'Bases de Datos II': {
+    grupo: 'Comisión A',
+    regimen: 'Cuatrimestral',
+    horario: 'Martes y Jueves · 18:30 a 21:30',
+    aula: '207',
+    cupo: '12 / 30',
+    requisitos: 'Bases de Datos I aprobada',
+    correlativasOk: true
+  },
+  'Estadística Aplicada': {
+    grupo: 'Comisión C',
+    regimen: 'Cuatrimestral',
+    horario: 'Lunes y Miércoles · 20:00 a 23:00',
+    aula: '105',
+    cupo: '28 / 30',
+    requisitos: 'Análisis Matemático I aprobada',
+    correlativasOk: true
+  },
+  'Sistemas Operativos': {
+    grupo: 'Mesa de examen · 28/05',
+    regimen: 'Examen final',
+    horario: '20:00',
+    aula: '207',
+    cupo: null, // las mesas no tienen cupo
+    requisitos: 'Cursada aprobada vigente',
+    correlativasOk: true
+  },
+  'Inglés Técnico': {
+    grupo: 'Mesa de examen · 02/06',
+    regimen: 'Examen final',
+    horario: '19:00',
+    aula: '102',
+    cupo: null,
+    requisitos: 'Cursada aprobada vigente',
+    correlativasOk: true
+  },
+  'Matemática Discreta': {
+    grupo: 'Mesa de examen · 05/06',
+    regimen: 'Examen final',
+    horario: '18:30',
+    aula: '308',
+    cupo: null,
+    requisitos: 'Cursada aprobada vigente',
+    correlativasOk: true
+  }
+};
+
 // ---------- Cambio de vista (3 vistas: Alumno mobile, Alumno web, Docente) ----------
 // Shneiderman: control del usuario. Interfaces líquidas: misma identidad, diferente layout.
 const btnVistaAlumno    = document.getElementById('btn-vista-alumno');
@@ -2351,29 +2368,67 @@ function logoutAlumnoWeb() {
 }
 
 // ---------- Flujo de inscripción (unificado mobile/web) ----------
+// renderResumenInscripcion pinta la card del paso 2 desde la misma fuente de
+// datos (OFERTA_ACADEMICA) en mobile y web, garantizando consistencia exacta.
+function renderResumenInscripcion(nombre, tipo, ambito) {
+  const meta = OFERTA_ACADEMICA[nombre];
+  if (!meta) return;
+  const prefix = ambito === 'web' ? 'resumen-web' : 'resumen-mobile';
+
+  const titulo = document.getElementById(prefix + '-titulo');
+  const metaEl = document.getElementById(prefix + '-tipo');
+  const detalles = document.getElementById(prefix + '-detalles');
+  const correlativas = document.getElementById(prefix + '-correlativas');
+  if (!titulo || !metaEl || !detalles) return;
+
+  titulo.textContent = nombre;
+  const tipoLabel = tipo === 'Final' ? 'Mesa de examen' : 'Cursada';
+  metaEl.textContent = tipoLabel + ' · ' + meta.grupo;
+
+  // Lista de campos consistente; cupo sólo si aplica (mesas de examen no tienen).
+  let html  = '<p style="margin:6px 0;"><strong>Régimen:</strong> ' + meta.regimen + '</p>';
+  html     += '<p style="margin:6px 0;"><strong>Horario:</strong> ' + meta.horario + '</p>';
+  html     += '<p style="margin:6px 0;"><strong>Aula:</strong> ' + meta.aula + '</p>';
+  if (meta.cupo) html += '<p style="margin:6px 0;"><strong>Cupo:</strong> ' + meta.cupo + '</p>';
+  html     += '<p style="margin:6px 0;"><strong>Requisitos:</strong> ' + meta.requisitos + '</p>';
+  detalles.innerHTML = html;
+
+  // Alert de correlativas: cambia tipo y mensaje según el chequeo.
+  if (correlativas) {
+    if (meta.correlativasOk) {
+      correlativas.className = 'alert alert-info' + (ambito === 'web' ? ' mt-2' : '');
+      if (ambito !== 'web') correlativas.style.marginTop = '14px';
+      correlativas.innerHTML = '<span class="alert-icon" aria-hidden="true">ⓘ</span>'
+        + '<div>Cumplís con los requisitos. Si algo no es correcto, podés volver atrás.</div>';
+    } else {
+      correlativas.className = 'alert alert-error' + (ambito === 'web' ? ' mt-2' : '');
+      if (ambito !== 'web') correlativas.style.marginTop = '14px';
+      correlativas.innerHTML = '<span class="alert-icon" aria-hidden="true">⚠</span>'
+        + '<div>No cumplís con los requisitos para esta inscripción.</div>';
+    }
+  }
+}
+
 // "origen" determina qué pantalla mostrar al confirmar (Interfaces Líquidas + DRY).
 function seleccionarMateria(nombre, tipo, origen) {
   origen = origen || 'mobile';
   materiaSeleccionada = { nombre, tipo, origen };
 
-  // Mobile: actualiza textos específicos de cada pantalla del flujo.
-  const resumenMat = document.getElementById('resumen-materia');
-  if (resumenMat) resumenMat.textContent = nombre;
-  const resumenTipo = document.getElementById('resumen-tipo');
-  if (resumenTipo) resumenTipo.textContent = tipo + ' · Comisión A';
-  const confirmMat = document.getElementById('confirm-materia');
-  if (confirmMat) confirmMat.textContent = nombre;
-  const confirmTipo = document.getElementById('confirm-tipo');
-  if (confirmTipo) confirmTipo.textContent = tipo;
+  // Pinta el resumen en ambos ámbitos para que cualquiera de los dos esté listo
+  // cuando el usuario cambie de vista a mitad del flujo.
+  renderResumenInscripcion(nombre, tipo, 'mobile');
+  renderResumenInscripcion(nombre, tipo, 'web');
+
+  // Comprobante mobile: actualiza nombre y tipo (etiqueta humana).
   const okMat = document.getElementById('ok-materia');
   if (okMat) okMat.textContent = nombre;
   const okTipo = document.getElementById('ok-tipo');
-  if (okTipo) okTipo.textContent = tipo;
-
-  // Web: actualiza el título de la card de resumen (compartido entre pasos).
-  document.querySelectorAll('.resumen-materia-web').forEach(el => {
-    el.textContent = nombre + ' · ' + tipo;
-  });
+  if (okTipo) {
+    const meta = OFERTA_ACADEMICA[nombre];
+    // meta.grupo ya incluye "Mesa de examen · ..." cuando aplica, así que no
+    // hace falta anteponer el tipo (evita duplicar el rótulo).
+    okTipo.textContent = meta ? meta.grupo : (tipo === 'Final' ? 'Mesa de examen' : 'Cursada');
+  }
 
   // Modal: nombre de la materia siempre visible (reducción de memoria).
   const modalMat = document.getElementById('modal-materia');
