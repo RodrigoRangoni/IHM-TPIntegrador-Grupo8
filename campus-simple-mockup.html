@@ -918,12 +918,14 @@
   <div class="role-controls">
     <label for="rol-select">Rol:</label>
     <select id="rol-select" aria-label="Seleccionar rol de usuario">
-      <option value="alumno">Alumno</option>
+      <option value="alumno">Alumno (Mobile)</option>
+      <option value="alumno-web">Alumno (Web)</option>
       <option value="docente">Docente</option>
     </select>
 
     <div class="toggle-group" role="group" aria-label="Cambiar vista del prototipo">
       <button id="btn-vista-alumno" type="button" aria-pressed="true">Vista App Alumno</button>
+      <button id="btn-vista-alumno-web" type="button" aria-pressed="false">Vista Web Alumno</button>
       <button id="btn-vista-docente" type="button" aria-pressed="false">Vista Web Docente</button>
     </div>
   </div>
@@ -1392,6 +1394,199 @@
   </section>
 
   <!-- =============================================================
+       VISTA ALUMNO - WEB ESCRITORIO
+       Interfaces líquidas: mismo sistema, layout amplio para escritorio.
+       Reutiliza componentes (sidebar, cards, stepper) del docente para
+       mantener consistencia (Shneiderman) y reducir memoria.
+       ============================================================= -->
+  <section id="view-alumno-web" class="view" aria-label="Vista Web Alumno">
+
+    <div class="desktop-stage">
+      <aside class="sidebar" aria-label="Menú principal del alumno (escritorio)">
+        <h2>Panel Alumno</h2>
+        <nav>
+          <button data-alumno-target="panel" aria-current="page" onclick="goAlumnoWeb('panel')">
+            <span aria-hidden="true">🏠</span> Inicio
+          </button>
+          <button data-alumno-target="inscripcion" onclick="goAlumnoWeb('inscripcion')">
+            <span aria-hidden="true">📝</span> Inscripciones
+          </button>
+          <button data-alumno-target="notas" onclick="goAlumnoWeb('notas')">
+            <span aria-hidden="true">📊</span> Mis notas
+          </button>
+        </nav>
+        <div class="user-card">
+          <div style="font-weight:600;">Lucía Acuña</div>
+          <div class="text-muted" style="color: var(--celeste-suave);">Legajo: A-1024</div>
+        </div>
+      </aside>
+
+      <!-- Ícono universal de cierre de sesión (arriba a la derecha). -->
+      <button class="logout-icon-btn logout-corner" onclick="logoutAlumnoWeb()"
+              aria-label="Cerrar sesión" title="Cerrar sesión">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+
+      <div class="desktop-content">
+
+        <!-- ============== PANEL ALUMNO WEB ============== -->
+        <div class="screen-step active" id="web-alumno-panel" data-screen-w="panel">
+          <h1 class="page-title">Bienvenida, Lucía</h1>
+          <p class="page-subtitle">Revisá tu estado académico y novedades del día.</p>
+
+          <div class="hero mb-2" role="region" aria-label="Próxima clase">
+            <h2>Próxima clase hoy</h2>
+            <p><strong>Interacción Usuario Máquina</strong> · 18:30 · Aula 304 (Piso 3)</p>
+          </div>
+
+          <p class="section-title">Alertas vigentes</p>
+          <div class="alert alert-warn" role="alert">
+            <span class="alert-icon" aria-hidden="true">⚠</span>
+            <div><strong>Inscripción a finales abierta</strong> hasta el 30/05. Revisá los requisitos.</div>
+          </div>
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ⓘ</span>
+            <div>Tenés <strong>1 acta firmada</strong> nueva en Algoritmos II.</div>
+          </div>
+
+          <p class="section-title">Tus cursadas actuales</p>
+          <div class="grid-cards">
+            <div class="card">
+              <h3 class="card-title">Interacción Usuario Máquina</h3>
+              <p class="card-meta">Comisión A · Lun/Mié 18:30</p>
+              <hr class="hr" />
+              <span class="badge badge-ok">Al día</span>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Algoritmos II</h3>
+              <p class="card-meta">Comisión B · Mar/Jue 20:00</p>
+              <hr class="hr" />
+              <span class="badge badge-warn">Pendiente TP</span>
+            </div>
+          </div>
+
+          <p class="section-title">Accesos rápidos</p>
+          <div class="btn-row mb-2">
+            <button class="btn btn-primary" onclick="goAlumnoWeb('inscripcion')">Inscribirme</button>
+            <button class="btn btn-secondary" onclick="goAlumnoWeb('notas')">Ver mis notas</button>
+          </div>
+        </div>
+
+        <!-- ============== INSCRIPCIÓN ALUMNO WEB ============== -->
+        <!-- Mismo flujo conceptual que mobile, expandido para escritorio -->
+        <div class="screen-step" id="web-alumno-inscripcion" data-screen-w="inscripcion">
+          <h1 class="page-title">Inscripción a materias y exámenes</h1>
+          <p class="page-subtitle">Seleccioná la comisión que se adapte a tus horarios.</p>
+
+          <div class="stepper" id="web-stepper" aria-label="Pasos de la inscripción">
+            <div class="step active" id="w-step-1">1. Seleccionar asignatura</div>
+            <div class="step" id="w-step-2">2. Controlar datos</div>
+            <div class="step" id="w-step-3">3. Finalizar</div>
+          </div>
+
+          <div id="web-inscripcion-contenido">
+
+            <div id="web-ins-p1" class="web-step-sub">
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Bases de Datos II</p>
+                  <p class="li-sub">Cursada · Comisión A · Cupos libres: 18</p>
+                </div>
+                <button class="btn btn-primary" onclick="seleccionarMateria('Bases de Datos II', 'Cursada', 'web')">Elegir materia</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Sistemas Operativos</p>
+                  <p class="li-sub">Examen final · Mesa 28/05 · 20:00</p>
+                </div>
+                <button class="btn btn-primary" onclick="seleccionarMateria('Sistemas Operativos', 'Final', 'web')">Elegir mesa</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <p class="li-title">Estadística Aplicada</p>
+                  <p class="li-sub">Cursada · Comisión C · Cupos libres: 2</p>
+                </div>
+                <button class="btn btn-primary" onclick="seleccionarMateria('Estadística Aplicada', 'Cursada', 'web')">Elegir materia</button>
+              </div>
+            </div>
+
+            <div id="web-ins-p2" class="web-step-sub" style="display:none;">
+              <div class="card">
+                <h3 class="card-title resumen-materia-web">Materia seleccionada</h3>
+                <p class="card-meta"><strong>Régimen:</strong> Cuatrimestral · <strong>Aula:</strong> 207</p>
+                <hr class="hr" />
+                <p style="margin:6px 0;"><strong>Horario:</strong> Mar y Jue · 18:30 a 21:30</p>
+                <p style="margin:6px 0;"><strong>Cupo:</strong> 12 / 30</p>
+                <p style="margin:6px 0;"><strong>Requisitos:</strong> Bases de Datos I aprobada</p>
+                <div class="alert alert-info mt-2" role="note">
+                  <span class="alert-icon" aria-hidden="true">ⓘ</span>
+                  <div>Cumplís con las correlativas para cursar.</div>
+                </div>
+              </div>
+              <div class="btn-row mt-2">
+                <button class="btn btn-secondary" onclick="cambiarPasoInscripcionWeb(1)">Volver</button>
+                <button class="btn btn-primary" onclick="abrirModal('modal-confirmar-inscripcion')">Confirmar mi cupo</button>
+              </div>
+            </div>
+
+            <div id="web-ins-p3" class="web-step-sub" style="display:none;">
+              <div class="receipt" role="status" aria-live="polite">
+                <div class="check" aria-hidden="true">✓</div>
+                <h2 style="margin: 8px 0 4px; color: var(--azul-profundo);">Trámite exitoso</h2>
+                <p>Tu inscripción a <strong id="web-materia-ok">Materia</strong> ya está asentada.</p>
+                <p class="text-muted" style="margin:0;">Comprobante digital: <strong>Web-2026-9912</strong></p>
+              </div>
+              <div class="btn-row mt-2">
+                <button class="btn btn-secondary" onclick="cambiarPasoInscripcionWeb(1)">Inscribirme a otra materia</button>
+                <button class="btn btn-ghost" onclick="goAlumnoWeb('panel')">Volver al inicio</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== NOTAS ALUMNO WEB ============== -->
+        <div class="screen-step" id="web-alumno-notas" data-screen-w="notas">
+          <h1 class="page-title">Historial académico</h1>
+          <p class="page-subtitle">Lista detallada de calificaciones oficiales firmadas en actas.</p>
+
+          <div class="filter-row" style="max-width:320px;">
+            <label for="filtro-periodo-web" style="position:absolute; left:-9999px;">Filtrar por período</label>
+            <select id="filtro-periodo-web" aria-label="Filtrar por período" onchange="filtrarNotasWeb()">
+              <option value="todos">Todos los períodos</option>
+              <option value="2026-1">2026 · 1er cuatrimestre</option>
+              <option value="2025-2">2025 · 2do cuatrimestre</option>
+              <option value="2025-1">2025 · 1er cuatrimestre</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data" aria-label="Historial académico del alumno">
+              <thead>
+                <tr>
+                  <th scope="col">Asignatura</th>
+                  <th scope="col">Período</th>
+                  <th scope="col">Nota final</th>
+                  <th scope="col">Condición</th>
+                </tr>
+              </thead>
+              <tbody id="web-tabla-notas-body">
+                <!-- Generado por JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /.desktop-content -->
+    </div><!-- /.desktop-stage -->
+  </section>
+
+  <!-- =============================================================
        VISTA DOCENTE - WEB ESCRITORIO
        Panel administrativo amplio. Menú lateral persistente.
        ============================================================= -->
@@ -1746,27 +1941,34 @@ const ALUMNOS = [
   { legajo: 'A-1092', nombre: 'Herrera, Bruno' }
 ];
 
-// Estado del prototipo
-let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada' };
+// Estado del prototipo. Incluye "origen" (mobile/web) para reutilizar
+// el flujo de inscripción en ambas vistas (interfaces líquidas + DCU).
+let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada', origen: 'mobile' };
 
-// ---------- Cambio de vista (Alumno / Docente) ----------
+// ---------- Cambio de vista (3 vistas: Alumno mobile, Alumno web, Docente) ----------
 // Shneiderman: control del usuario. Interfaces líquidas: misma identidad, diferente layout.
-const btnVistaAlumno  = document.getElementById('btn-vista-alumno');
-const btnVistaDocente = document.getElementById('btn-vista-docente');
-const viewAlumno  = document.getElementById('view-alumno');
-const viewDocente = document.getElementById('view-docente');
-const rolSelect   = document.getElementById('rol-select');
+const btnVistaAlumno    = document.getElementById('btn-vista-alumno');
+const btnVistaAlumnoWeb = document.getElementById('btn-vista-alumno-web');
+const btnVistaDocente   = document.getElementById('btn-vista-docente');
+const viewAlumno    = document.getElementById('view-alumno');
+const viewAlumnoWeb = document.getElementById('view-alumno-web');
+const viewDocente   = document.getElementById('view-docente');
+const rolSelect     = document.getElementById('rol-select');
 
 function setVista(vista) {
-  const esAlumno = vista === 'alumno';
-  viewAlumno.classList.toggle('active', esAlumno);
-  viewDocente.classList.toggle('active', !esAlumno);
-  btnVistaAlumno.setAttribute('aria-pressed',  esAlumno ? 'true' : 'false');
-  btnVistaDocente.setAttribute('aria-pressed', esAlumno ? 'false' : 'true');
-  rolSelect.value = esAlumno ? 'alumno' : 'docente';
+  viewAlumno.classList.toggle('active',    vista === 'alumno');
+  viewAlumnoWeb.classList.toggle('active', vista === 'alumno-web');
+  viewDocente.classList.toggle('active',   vista === 'docente');
+
+  btnVistaAlumno.setAttribute('aria-pressed',    vista === 'alumno'     ? 'true' : 'false');
+  btnVistaAlumnoWeb.setAttribute('aria-pressed', vista === 'alumno-web' ? 'true' : 'false');
+  btnVistaDocente.setAttribute('aria-pressed',   vista === 'docente'    ? 'true' : 'false');
+
+  rolSelect.value = vista;
 }
-btnVistaAlumno.addEventListener('click',  () => setVista('alumno'));
-btnVistaDocente.addEventListener('click', () => setVista('docente'));
+btnVistaAlumno.addEventListener('click',    () => setVista('alumno'));
+btnVistaAlumnoWeb.addEventListener('click', () => setVista('alumno-web'));
+btnVistaDocente.addEventListener('click',   () => setVista('docente'));
 rolSelect.addEventListener('change', (e) => setVista(e.target.value));
 
 // ---------- Navegación entre pantallas del alumno ----------
@@ -1779,12 +1981,25 @@ function goAlumno(screen) {
   if (phoneBody) phoneBody.scrollTop = 0;
 }
 
+// ---------- Navegación entre pantallas del alumno web ----------
+// Consistencia con la sidebar del docente (Shneiderman: consistencia).
+function goAlumnoWeb(screen) {
+  document.querySelectorAll('#view-alumno-web .screen-step').forEach(el => {
+    el.classList.toggle('active', el.dataset.screenW === screen);
+  });
+  document.querySelectorAll('#view-alumno-web .sidebar nav button').forEach(btn => {
+    btn.setAttribute('aria-current', btn.dataset.alumnoTarget === screen ? 'page' : 'false');
+  });
+  // Si se navega a inscripción, siempre arrancar en el paso 1 (cierre claro de secuencia).
+  if (screen === 'inscripcion') cambiarPasoInscripcionWeb(1);
+}
+
 // ---------- Navegación entre pantallas del docente ----------
 function goDocente(screen) {
   document.querySelectorAll('#view-docente .screen-step').forEach(el => {
     el.classList.toggle('active', el.dataset.screenD === screen);
   });
-  document.querySelectorAll('.sidebar nav button').forEach(btn => {
+  document.querySelectorAll('#view-docente .sidebar nav button').forEach(btn => {
     btn.setAttribute('aria-current', btn.dataset.docenteTarget === screen ? 'page' : 'false');
   });
 }
@@ -1871,22 +2086,76 @@ function logoutDocente() {
   showToast('Cerraste sesión correctamente.', 'success');
 }
 
-// ---------- Flujo de inscripción ----------
-function seleccionarMateria(nombre, tipo) {
-  materiaSeleccionada = { nombre, tipo };
-  document.getElementById('resumen-materia').textContent = nombre;
-  document.getElementById('resumen-tipo').textContent    = tipo + ' · Comisión A';
-  document.getElementById('confirm-materia').textContent = nombre;
-  document.getElementById('confirm-tipo').textContent    = tipo;
-  document.getElementById('modal-materia').textContent   = nombre;
-  document.getElementById('ok-materia').textContent      = nombre;
-  document.getElementById('ok-tipo').textContent         = tipo;
-  goAlumno('inscripcion-paso2');
+// ---------- Logout alumno web ----------
+function logoutAlumnoWeb() {
+  // Para mantener la simetría con la vista docente y mobile:
+  // se cambia a la vista mobile y se vuelve al login (único formulario de acceso del alumno).
+  setVista('alumno');
+  goAlumno('login');
+  showToast('Cerraste sesión correctamente.', 'success');
+}
+
+// ---------- Flujo de inscripción (unificado mobile/web) ----------
+// "origen" determina qué pantalla mostrar al confirmar (Interfaces Líquidas + DRY).
+function seleccionarMateria(nombre, tipo, origen) {
+  origen = origen || 'mobile';
+  materiaSeleccionada = { nombre, tipo, origen };
+
+  // Mobile: actualiza textos específicos de cada pantalla del flujo.
+  const resumenMat = document.getElementById('resumen-materia');
+  if (resumenMat) resumenMat.textContent = nombre;
+  const resumenTipo = document.getElementById('resumen-tipo');
+  if (resumenTipo) resumenTipo.textContent = tipo + ' · Comisión A';
+  const confirmMat = document.getElementById('confirm-materia');
+  if (confirmMat) confirmMat.textContent = nombre;
+  const confirmTipo = document.getElementById('confirm-tipo');
+  if (confirmTipo) confirmTipo.textContent = tipo;
+  const okMat = document.getElementById('ok-materia');
+  if (okMat) okMat.textContent = nombre;
+  const okTipo = document.getElementById('ok-tipo');
+  if (okTipo) okTipo.textContent = tipo;
+
+  // Web: actualiza el título de la card de resumen (compartido entre pasos).
+  document.querySelectorAll('.resumen-materia-web').forEach(el => {
+    el.textContent = nombre + ' · ' + tipo;
+  });
+
+  // Modal: nombre de la materia siempre visible (reducción de memoria).
+  const modalMat = document.getElementById('modal-materia');
+  if (modalMat) modalMat.textContent = nombre;
+
+  // Navega al paso 2 según el origen.
+  if (origen === 'web') {
+    cambiarPasoInscripcionWeb(2);
+  } else {
+    goAlumno('inscripcion-paso2');
+  }
+}
+
+// Cambio de paso en el flujo de inscripción web (1, 2 ó 3).
+function cambiarPasoInscripcionWeb(paso) {
+  const p1 = document.getElementById('web-ins-p1');
+  const p2 = document.getElementById('web-ins-p2');
+  const p3 = document.getElementById('web-ins-p3');
+  if (!p1 || !p2 || !p3) return;
+  p1.style.display = paso === 1 ? 'block' : 'none';
+  p2.style.display = paso === 2 ? 'block' : 'none';
+  p3.style.display = paso === 3 ? 'block' : 'none';
+
+  document.getElementById('w-step-1').className = paso === 1 ? 'step active' : 'step done';
+  document.getElementById('w-step-2').className = paso === 2 ? 'step active' : (paso > 2 ? 'step done' : 'step');
+  document.getElementById('w-step-3').className = paso === 3 ? 'step active' : 'step';
 }
 
 function confirmarInscripcion() {
   cerrarModal('modal-confirmar-inscripcion');
-  goAlumno('inscripcion-ok');
+  if (materiaSeleccionada.origen === 'web') {
+    const okWeb = document.getElementById('web-materia-ok');
+    if (okWeb) okWeb.textContent = materiaSeleccionada.nombre;
+    cambiarPasoInscripcionWeb(3);
+  } else {
+    goAlumno('inscripcion-ok');
+  }
   showToast('Inscripción confirmada.', 'success');
 }
 
@@ -2083,9 +2352,42 @@ function showToast(msg, type) {
   }, 2800);
 }
 
+// ---------- Render historial académico del alumno web ----------
+// Reutiliza la lógica de estado (Promocionada/Regular/Pendiente) para mantener
+// consistencia entre la vista mobile y la web (Shneiderman: consistencia).
+const HISTORIAL_ALUMNO_WEB = [
+  { materia: 'Interacción Usuario Máquina', periodo: '2026-1', periodoTxt: '2026 · 1° cuat.', nota: 9,  cond: 'Promocionada', clase: 'badge-ok' },
+  { materia: 'Algoritmos II',               periodo: '2026-1', periodoTxt: '2026 · 1° cuat.', nota: 7,  cond: 'Regular',      clase: 'badge-info' },
+  { materia: 'Bases de Datos II',           periodo: '2026-1', periodoTxt: '2026 · 1° cuat.', nota: '—', cond: 'Pendiente',    clase: 'badge-warn' },
+  { materia: 'Programación III',            periodo: '2025-2', periodoTxt: '2025 · 2° cuat.', nota: 8,  cond: 'Promocionada', clase: 'badge-ok' },
+  { materia: 'Matemática Discreta',         periodo: '2025-2', periodoTxt: '2025 · 2° cuat.', nota: 6,  cond: 'Regular',      clase: 'badge-info' },
+  { materia: 'Análisis Matemático I',       periodo: '2025-1', periodoTxt: '2025 · 1° cuat.', nota: 4,  cond: 'Pendiente',    clase: 'badge-error' }
+];
+
+function renderHistorialAlumnoWeb() {
+  const tbody = document.getElementById('web-tabla-notas-body');
+  if (!tbody) return;
+  tbody.innerHTML = HISTORIAL_ALUMNO_WEB.map(h => `
+    <tr data-periodo="${h.periodo}">
+      <td>${h.materia}</td>
+      <td>${h.periodoTxt}</td>
+      <td><strong>${h.nota}</strong></td>
+      <td><span class="badge ${h.clase}">${h.cond}</span></td>
+    </tr>
+  `).join('');
+}
+
+function filtrarNotasWeb() {
+  const valor = document.getElementById('filtro-periodo-web').value;
+  document.querySelectorAll('#web-tabla-notas-body tr').forEach(tr => {
+    tr.style.display = (valor === 'todos' || tr.dataset.periodo === valor) ? '' : 'none';
+  });
+}
+
 // ---------- Inicialización ----------
 renderTablaNotas();
 renderTablaAsistencia();
+renderHistorialAlumnoWeb();
 </script>
 
 </body>
