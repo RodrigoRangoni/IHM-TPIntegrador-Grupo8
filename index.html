@@ -335,12 +335,28 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
+    align-items: stretch; /* todas las cards toman la misma altura */
+  }
+  /* Cards en grid se distribuyen como flex-column para que botones queden
+     anclados al pie y los headers se alineen aunque el contenido difiera. */
+  .grid-cards > .card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .grid-cards > .card .btn-row { margin-top: auto; }
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 132px;
   }
   .stat-card .stat-number {
     font-size: var(--fs-xxl);
     color: var(--azul-profundo);
     font-weight: 700;
     line-height: 1.1;
+    margin: 4px 0;
   }
 
   /* Botones (Rams: claros y funcionales, sin decoración innecesaria) */
@@ -1007,14 +1023,9 @@
     <span>Klassly</span>
   </div>
 
+  <!-- El selector de rol se eliminó por ser redundante con el toggle visible
+       (Rams: "menos, pero mejor"). El toggle ya cumple el rol de control único. -->
   <div class="role-controls">
-    <label for="rol-select">Rol:</label>
-    <select id="rol-select" aria-label="Seleccionar rol de usuario">
-      <option value="alumno">Alumno (Mobile)</option>
-      <option value="alumno-web">Alumno (Web)</option>
-      <option value="docente">Docente</option>
-    </select>
-
     <div class="toggle-group" role="group" aria-label="Cambiar vista del prototipo">
       <button id="btn-vista-alumno" type="button" aria-pressed="true">Vista App Alumno</button>
       <button id="btn-vista-alumno-web" type="button" aria-pressed="false">Vista Web Alumno</button>
@@ -1852,26 +1863,20 @@
       <div class="desktop-content">
 
         <!-- ============== PANEL DOCENTE ============== -->
+        <!-- Orden de secciones espejado al home del alumno (DCU + consistencia):
+             1) Hero contextual (próxima clase a dar)
+             2) Accesos rápidos
+             3) Alertas y pendientes
+             4) Mis cursos -->
         <div class="screen-step active" id="docente-panel" data-screen-d="panel">
           <h1 class="page-title">Panel del docente</h1>
           <p class="page-subtitle">Tu jornada de hoy, lunes 20 de mayo de 2026.</p>
 
-          <div class="grid-cards">
-            <div class="card stat-card">
-              <p class="card-meta">Cursos de hoy</p>
-              <div class="stat-number">2</div>
-              <p class="card-meta">IUM · Algoritmos II</p>
-            </div>
-            <div class="card stat-card">
-              <p class="card-meta">Actas por cerrar</p>
-              <div class="stat-number">3</div>
-              <p class="card-meta">Vencen el 30/05</p>
-            </div>
-            <div class="card stat-card">
-              <p class="card-meta">Pendientes</p>
-              <div class="stat-number">5</div>
-              <p class="card-meta">Asistencias y notas borrador</p>
-            </div>
+          <!-- Hero: próxima clase a dar (paralelo al hero "Próxima clase" del alumno) -->
+          <div class="hero mb-2" role="region" aria-label="Próxima clase a dar">
+            <p style="margin:0; font-size: var(--fs-xs); color: var(--celeste);">¡Hola, Prof. Díaz!</p>
+            <h2>Próxima clase a dar</h2>
+            <p><strong>Interacción Usuario Máquina</strong> · Hoy 18:30 · Aula 304</p>
           </div>
 
           <p class="section-title">Accesos rápidos</p>
@@ -1881,6 +1886,20 @@
             <button class="btn btn-ghost" onclick="goDocente('ayuda')">Ver criterios pedagógicos</button>
           </div>
 
+          <p class="section-title">Alertas y pendientes</p>
+          <div class="alert alert-warn" role="alert">
+            <span class="alert-icon" aria-hidden="true">⚠</span>
+            <div><strong>3 actas por cerrar</strong> antes del 30/05.</div>
+          </div>
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ⓘ</span>
+            <div>Tenés <strong>5 pendientes</strong>: asistencias y notas en borrador.</div>
+          </div>
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ⓘ</span>
+            <div><strong>2 cursos hoy</strong>: IUM (18:30) y Algoritmos II (20:00).</div>
+          </div>
+
           <p class="section-title">Mis cursos</p>
           <div class="grid-cards">
             <div class="card">
@@ -1888,8 +1907,8 @@
               <p class="card-meta">Comisión A · Lunes y Miércoles 18:30</p>
               <hr class="hr" />
               <div class="btn-row">
-                <button class="btn btn-secondary" onclick="goDocente('asistencia')">Asistencia</button>
-                <button class="btn btn-secondary" onclick="goDocente('notas')">Notas</button>
+                <button class="btn btn-secondary" onclick="abrirAsistenciaDe('IUM')">Asistencia</button>
+                <button class="btn btn-secondary" onclick="abrirNotasDe('IUM')">Notas</button>
               </div>
             </div>
             <div class="card">
@@ -1897,25 +1916,36 @@
               <p class="card-meta">Comisión B · Martes y Jueves 20:00</p>
               <hr class="hr" />
               <div class="btn-row">
-                <button class="btn btn-secondary" onclick="goDocente('asistencia')">Asistencia</button>
-                <button class="btn btn-secondary" onclick="goDocente('notas')">Notas</button>
+                <button class="btn btn-secondary" onclick="abrirAsistenciaDe('ALG2')">Asistencia</button>
+                <button class="btn btn-secondary" onclick="abrirNotasDe('ALG2')">Notas</button>
               </div>
             </div>
           </div>
         </div>
 
         <!-- ============== CARGA DE NOTAS ============== -->
-        <!-- Shneiderman: prevención de errores con validación de rango 1-10. -->
+        <!-- Shneiderman: prevención de errores con validación de rango 1-10.
+             El selector permite cambiar la materia activa (DCU: el docente
+             típicamente dicta más de una materia). -->
         <div class="screen-step" id="docente-notas" data-screen-d="notas">
           <h1 class="page-title">Carga de notas</h1>
           <p class="page-subtitle">Cargá las notas finales o guardá un borrador para terminar después.</p>
 
+          <div class="form-field" style="max-width:420px;">
+            <label for="select-materia-notas">Materia / Comisión</label>
+            <select id="select-materia-notas" aria-label="Seleccionar materia para cargar notas"
+                    onchange="cambiarMateriaDocente('notas', this.value)">
+              <option value="IUM">Interacción Usuario Máquina · Comisión A</option>
+              <option value="ALG2">Algoritmos II · Comisión B</option>
+            </select>
+          </div>
+
           <!-- Contexto siempre visible: reducción de memoria de corto plazo -->
           <div class="context-bar" role="region" aria-label="Contexto del acta">
-            <div><strong>Materia:</strong> Interacción Usuario Máquina</div>
-            <div><strong>Comisión:</strong> A · Turno Noche</div>
+            <div><strong>Materia:</strong> <span id="ctx-notas-materia">Interacción Usuario Máquina</span></div>
+            <div><strong>Comisión:</strong> <span id="ctx-notas-comision">A · Turno Noche</span></div>
             <div><strong>Período:</strong> 2026 · 1° cuatrimestre</div>
-            <div><strong>Estado:</strong> <span class="badge badge-warn">Borrador</span></div>
+            <div><strong>Estado:</strong> <span class="badge badge-warn" id="ctx-notas-estado">Borrador</span></div>
           </div>
 
           <form id="form-notas" novalidate>
@@ -1953,10 +1983,19 @@
           <h1 class="page-title">Asistencias</h1>
           <p class="page-subtitle">Registrá la asistencia de la clase de hoy.</p>
 
+          <div class="form-field" style="max-width:420px;">
+            <label for="select-materia-asistencia">Materia / Comisión</label>
+            <select id="select-materia-asistencia" aria-label="Seleccionar materia para tomar asistencia"
+                    onchange="cambiarMateriaDocente('asistencia', this.value)">
+              <option value="IUM">Interacción Usuario Máquina · Comisión A</option>
+              <option value="ALG2">Algoritmos II · Comisión B</option>
+            </select>
+          </div>
+
           <div class="context-bar" role="region" aria-label="Contexto de asistencia">
             <div><strong>Fecha:</strong> Lun 20/05/2026</div>
-            <div><strong>Materia:</strong> Interacción Usuario Máquina</div>
-            <div><strong>Comisión:</strong> A · Turno Noche</div>
+            <div><strong>Materia:</strong> <span id="ctx-asistencia-materia">Interacción Usuario Máquina</span></div>
+            <div><strong>Comisión:</strong> <span id="ctx-asistencia-comision">A · Turno Noche</span></div>
           </div>
 
           <form id="form-asistencia">
@@ -2124,6 +2163,22 @@ const ALUMNOS = [
 // el flujo de inscripción en ambas vistas (interfaces líquidas + DCU).
 let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada', origen: 'mobile' };
 
+// Materias que dicta el docente (DCU: el docente puede dictar varias materias
+// y el sistema debe permitirle alternar entre ellas sin ambigüedad).
+const MATERIAS_DOCENTE = {
+  IUM:  {
+    nombre: 'Interacción Usuario Máquina',
+    comision: 'A · Turno Noche',
+    estado: 'Borrador'  // estado del acta
+  },
+  ALG2: {
+    nombre: 'Algoritmos II',
+    comision: 'B · Turno Noche',
+    estado: 'Pendiente'
+  }
+};
+let materiaDocenteActiva = 'IUM';
+
 // Oferta académica: única fuente de verdad para el paso 2 de inscripción.
 // Mantiene la vista mobile y la web sincronizadas (DRY + consistencia).
 const OFERTA_ACADEMICA = {
@@ -2182,7 +2237,6 @@ const btnVistaDocente   = document.getElementById('btn-vista-docente');
 const viewAlumno    = document.getElementById('view-alumno');
 const viewAlumnoWeb = document.getElementById('view-alumno-web');
 const viewDocente   = document.getElementById('view-docente');
-const rolSelect     = document.getElementById('rol-select');
 
 function setVista(vista) {
   viewAlumno.classList.toggle('active',    vista === 'alumno');
@@ -2192,13 +2246,10 @@ function setVista(vista) {
   btnVistaAlumno.setAttribute('aria-pressed',    vista === 'alumno'     ? 'true' : 'false');
   btnVistaAlumnoWeb.setAttribute('aria-pressed', vista === 'alumno-web' ? 'true' : 'false');
   btnVistaDocente.setAttribute('aria-pressed',   vista === 'docente'    ? 'true' : 'false');
-
-  rolSelect.value = vista;
 }
 btnVistaAlumno.addEventListener('click',    () => setVista('alumno'));
 btnVistaAlumnoWeb.addEventListener('click', () => setVista('alumno-web'));
 btnVistaDocente.addEventListener('click',   () => setVista('docente'));
-rolSelect.addEventListener('change', (e) => setVista(e.target.value));
 
 // ---------- Navegación entre pantallas del alumno ----------
 function goAlumno(screen) {
@@ -2488,6 +2539,40 @@ function filtrarNotas() {
   });
 }
 
+// ---------- Selector de materia activa del docente ----------
+// Permite alternar entre las materias que dicta sin perder el lugar
+// (reducción de memoria + control del usuario).
+function cambiarMateriaDocente(seccion, codigo) {
+  const meta = MATERIAS_DOCENTE[codigo];
+  if (!meta) return;
+  materiaDocenteActiva = codigo;
+
+  if (seccion === 'notas') {
+    document.getElementById('ctx-notas-materia').textContent  = meta.nombre;
+    document.getElementById('ctx-notas-comision').textContent = meta.comision;
+    const estadoEl = document.getElementById('ctx-notas-estado');
+    estadoEl.textContent = meta.estado;
+    estadoEl.className = 'badge ' + (meta.estado === 'Cerrada' ? 'badge-ok' : 'badge-warn');
+  } else if (seccion === 'asistencia') {
+    document.getElementById('ctx-asistencia-materia').textContent  = meta.nombre;
+    document.getElementById('ctx-asistencia-comision').textContent = meta.comision;
+  }
+  // Sincroniza el select correspondiente (por si la sección se abrió desde
+  // el panel y no por interacción del select).
+  const sel = document.getElementById('select-materia-' + seccion);
+  if (sel && sel.value !== codigo) sel.value = codigo;
+}
+
+// Atajos desde el panel: abrir asistencia o notas de una materia específica.
+function abrirAsistenciaDe(codigo) {
+  cambiarMateriaDocente('asistencia', codigo);
+  goDocente('asistencia');
+}
+function abrirNotasDe(codigo) {
+  cambiarMateriaDocente('notas', codigo);
+  goDocente('notas');
+}
+
 // ---------- Render tabla de notas (docente) ----------
 // Shneiderman: prevención de errores - inputs limitados de 1 a 10.
 function renderTablaNotas() {
@@ -2567,8 +2652,12 @@ function revisarYCerrarActa() {
 function confirmarCierreActa() {
   cerrarModal('modal-cerrar-acta');
   showToast('Acta cerrada y enviada a Bedelía.', 'success');
-  // Cambiamos el badge de estado en el contexto (feedback visual)
-  const ctxBadge = document.querySelector('#docente-notas .context-bar .badge');
+  // Persistir el estado de la materia activa para que se mantenga al cambiar
+  // entre materias del docente.
+  if (MATERIAS_DOCENTE[materiaDocenteActiva]) {
+    MATERIAS_DOCENTE[materiaDocenteActiva].estado = 'Cerrada';
+  }
+  const ctxBadge = document.getElementById('ctx-notas-estado');
   if (ctxBadge) {
     ctxBadge.className = 'badge badge-ok';
     ctxBadge.textContent = 'Cerrada';
