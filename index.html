@@ -244,7 +244,7 @@
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 24px;
-    align-items: start;
+    align-items: stretch; /* sidebar se estira a la altura del contenido principal */
     background: var(--blanco);
     border: 1px solid var(--gris-borde);
     border-radius: var(--radio-l);
@@ -256,7 +256,8 @@
     background: var(--azul-medio);
     color: var(--blanco);
     padding: 20px 12px;
-    min-height: 720px;
+    /* min-height removido: el grid stretch ya garantiza la altura
+       y antes 720px fijos dejaba un hueco si el contenido era más alto. */
   }
   .sidebar h2 {
     font-size: var(--fs-s);
@@ -337,14 +338,19 @@
     margin-bottom: 24px;
     align-items: stretch; /* todas las cards toman la misma altura */
   }
-  /* Cards en grid se distribuyen como flex-column para que botones queden
-     anclados al pie y los headers se alineen aunque el contenido difiera. */
+  /* Cards en grid se distribuyen como flex-column para que la altura del row
+     sea uniforme entre cards. El <hr> usa margin-top:auto para empujar todo
+     el contenido que viene después (badge o botonera) al pie, garantizando
+     alineación visual aunque las cards tengan distinta cantidad de texto. */
   .grid-cards > .card {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  .grid-cards > .card .btn-row { margin-top: auto; }
+  .grid-cards > .card > .hr {
+    margin-top: auto;
+    margin-bottom: 14px;
+  }
   .stat-card {
     display: flex;
     flex-direction: column;
