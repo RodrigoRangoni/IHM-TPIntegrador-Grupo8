@@ -463,6 +463,34 @@
   }
   .form-field.invalid .field-error { display: block; }
 
+  /* Campo con toggle de visibilidad (mostrar/ocultar contraseña).
+     Mejora de accesibilidad: el usuario puede verificar lo que tipea sin
+     reescribirlo. aria-pressed indica el estado actual del botón a lectores
+     de pantalla. */
+  .input-with-toggle { position: relative; display: block; }
+  .input-with-toggle input { width: 100%; padding-right: 46px; }
+  .toggle-password {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--gris-texto);
+    border-radius: var(--radio-s);
+  }
+  .toggle-password:hover { background: var(--celeste-suave); color: var(--azul-profundo); }
+  .toggle-password svg { display: block; }
+  .toggle-password .eye-closed { display: none; }
+  .toggle-password[aria-pressed="true"] .eye-open { display: none; }
+  .toggle-password[aria-pressed="true"] .eye-closed { display: block; }
+
   /* Tablas (escritorio docente) */
   .table-wrap {
     overflow-x: auto;
@@ -987,19 +1015,47 @@
               <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Bienvenido</h1>
               <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Ingresá con tu usuario o DNI</p>
 
+              <!-- Las aclaraciones van como placeholder dentro del input
+                   (Miro-Leo-Pienso + Rams: "menos, pero mejor"). Se quitó la
+                   ayuda inicial sobre cómo armar la contraseña por defecto
+                   por motivos de seguridad: revelar el método público hace
+                   que cualquiera que sepa el DNI pueda acceder. -->
               <form id="form-login" novalidate>
                 <div class="form-field">
                   <label for="login-usuario">Usuario o DNI</label>
                   <input type="text" id="login-usuario" name="usuario" autocomplete="username"
-                         aria-describedby="hint-usuario" required value="35.123.456" />
-                  <span class="hint" id="hint-usuario">Podés usar tu número de DNI sin puntos.</span>
+                         placeholder="Ej. 35123456 (sin puntos)" required />
                   <span class="field-error">Ingresá tu usuario o DNI.</span>
                 </div>
 
                 <div class="form-field">
                   <label for="login-pass">Contraseña</label>
-                  <input type="password" id="login-pass" name="pass" autocomplete="current-password"
-                         required minlength="4" value="demo1234" />
+                  <div class="input-with-toggle">
+                    <input type="password" id="login-pass" name="pass" autocomplete="current-password"
+                           placeholder="Tu contraseña" required minlength="4" />
+                    <!-- Toggle de visibilidad de contraseña (accesibilidad: usuario verifica lo que tipea). -->
+                    <button type="button" class="toggle-password"
+                            data-target="login-pass"
+                            aria-pressed="false"
+                            aria-label="Mostrar contraseña"
+                            title="Mostrar contraseña"
+                            onclick="togglePasswordVisibility(this)">
+                      <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      </svg>
+                    </button>
+                  </div>
                   <span class="field-error">La contraseña no puede estar vacía.</span>
                 </div>
 
@@ -1007,12 +1063,6 @@
 
                 <div style="text-align:center; margin-top: 14px;">
                   <a href="#" class="btn btn-ghost" onclick="event.preventDefault(); showToast('Te enviamos un mail con instrucciones.', 'success')">¿Olvidaste tu clave?</a>
-                </div>
-
-                <!-- Alerta accesible: ayuda visible y no dependiente del color -->
-                <div class="alert alert-info" role="note" style="margin-top:18px;">
-                  <span class="alert-icon" aria-hidden="true">ⓘ</span>
-                  <div>Si es la primera vez que ingresás, usá los últimos 6 dígitos de tu DNI como contraseña.</div>
                 </div>
               </form>
             </div>
@@ -1637,15 +1687,38 @@
           <div class="form-field">
             <label for="login-docente-usuario">Usuario institucional</label>
             <input type="text" id="login-docente-usuario" name="usuario" autocomplete="username"
-                   aria-describedby="hint-docente-usuario" required value="mdiaz@campus.edu.ar" />
-            <span class="hint" id="hint-docente-usuario">Usá tu correo institucional o legajo docente.</span>
+                   placeholder="Correo institucional o legajo docente" required />
             <span class="field-error">Ingresá tu usuario institucional.</span>
           </div>
 
           <div class="form-field">
             <label for="login-docente-pass">Contraseña</label>
-            <input type="password" id="login-docente-pass" name="pass" autocomplete="current-password"
-                   required minlength="4" value="demo1234" />
+            <div class="input-with-toggle">
+              <input type="password" id="login-docente-pass" name="pass" autocomplete="current-password"
+                     placeholder="Tu contraseña" required minlength="4" />
+              <!-- Toggle de visibilidad de contraseña (accesibilidad). -->
+              <button type="button" class="toggle-password"
+                      data-target="login-docente-pass"
+                      aria-pressed="false"
+                      aria-label="Mostrar contraseña"
+                      title="Mostrar contraseña"
+                      onclick="togglePasswordVisibility(this)">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
             <span class="field-error">La contraseña no puede estar vacía.</span>
           </div>
 
@@ -2069,6 +2142,22 @@ document.getElementById('form-login').addEventListener('submit', (e) => {
 // ---------- Logout alumno ----------
 // Shneiderman: control del usuario - puede cerrar sesión cuando quiera.
 // Norman/Kano: feedback de confirmación claro tras la acción.
+// ---------- Toggle de visibilidad de contraseña ----------
+// Accesibilidad: el usuario puede verificar lo que tipea. aria-pressed,
+// aria-label y title se actualizan para soporte de lectores de pantalla.
+function togglePasswordVisibility(btn) {
+  const targetId = btn.dataset.target;
+  const input = document.getElementById(targetId);
+  if (!input) return;
+  const mostrando = btn.getAttribute('aria-pressed') === 'true';
+  const nuevoEstado = !mostrando;
+  btn.setAttribute('aria-pressed', String(nuevoEstado));
+  const etiqueta = nuevoEstado ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  btn.setAttribute('aria-label', etiqueta);
+  btn.setAttribute('title', etiqueta);
+  input.type = nuevoEstado ? 'text' : 'password';
+}
+
 function logoutAlumno() {
   goAlumno('login');
   showToast('Cerraste sesión correctamente.', 'success');
