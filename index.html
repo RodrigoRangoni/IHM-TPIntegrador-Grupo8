@@ -323,6 +323,9 @@
     box-shadow: var(--sombra-1);
   }
   .card + .card { margin-top: 12px; }
+  /* Dentro de un grid el espacio ya lo da el gap; el margin-top entre cards
+     consecutivas desalineaba alturas. */
+  .grid-cards > .card + .card { margin-top: 0; }
   .card-title {
     margin: 0 0 8px;
     font-size: var(--fs-m);
@@ -2153,34 +2156,44 @@
    Toda la lógica está comentada con la regla teórica que respalda la decisión.
    ===================================================================== */
 
-// ---------- Datos mockeados ----------
-const ALUMNOS = [
-  { legajo: 'A-1024', nombre: 'Acuña, Lucía' },
-  { legajo: 'A-1031', nombre: 'Benítez, Tomás' },
-  { legajo: 'A-1045', nombre: 'Castro, Mariana' },
-  { legajo: 'A-1058', nombre: 'Domínguez, Pablo' },
-  { legajo: 'A-1064', nombre: 'Estévez, Sol' },
-  { legajo: 'A-1077', nombre: 'Fernández, Iván' },
-  { legajo: 'A-1089', nombre: 'García, Camila' },
-  { legajo: 'A-1092', nombre: 'Herrera, Bruno' }
-];
-
 // Estado del prototipo. Incluye "origen" (mobile/web) para reutilizar
 // el flujo de inscripción en ambas vistas (interfaces líquidas + DCU).
 let materiaSeleccionada = { nombre: 'Bases de Datos II', tipo: 'Cursada', origen: 'mobile' };
 
 // Materias que dicta el docente (DCU: el docente puede dictar varias materias
-// y el sistema debe permitirle alternar entre ellas sin ambigüedad).
+// y el sistema debe permitirle alternar entre ellas sin ambigüedad). Cada
+// materia tiene su propia lista de alumnos con sus notas, para que el cambio
+// de selector refleje un cambio real de contexto y no sólo un cambio de label.
 const MATERIAS_DOCENTE = {
   IUM:  {
     nombre: 'Interacción Usuario Máquina',
     comision: 'A · Turno Noche',
-    estado: 'Borrador'  // estado del acta
+    estado: 'Borrador',
+    alumnos: [
+      { legajo: 'A-1024', nombre: 'Acuña, Lucía',     nota: 9  },
+      { legajo: 'A-1031', nombre: 'Benítez, Tomás',   nota: 7  },
+      { legajo: 'A-1045', nombre: 'Castro, Mariana',  nota: '' },
+      { legajo: 'A-1058', nombre: 'Domínguez, Pablo', nota: 6  },
+      { legajo: 'A-1064', nombre: 'Estévez, Sol',     nota: 10 },
+      { legajo: 'A-1077', nombre: 'Fernández, Iván',  nota: 8  },
+      { legajo: 'A-1089', nombre: 'García, Camila',   nota: '' },
+      { legajo: 'A-1092', nombre: 'Herrera, Bruno',   nota: 5  }
+    ]
   },
   ALG2: {
     nombre: 'Algoritmos II',
     comision: 'B · Turno Noche',
-    estado: 'Pendiente'
+    estado: 'Pendiente',
+    alumnos: [
+      { legajo: 'A-2014', nombre: 'Álvarez, Joaquín',  nota: 8  },
+      { legajo: 'A-2027', nombre: 'Bianchi, Renata',   nota: 6  },
+      { legajo: 'A-2033', nombre: 'Cabrera, Diego',    nota: 9  },
+      { legajo: 'A-2049', nombre: 'Díaz, Florencia',   nota: '' },
+      { legajo: 'A-2056', nombre: 'Elizalde, Mateo',   nota: 4  },
+      { legajo: 'A-2068', nombre: 'Fontana, Catalina', nota: 7  },
+      { legajo: 'A-2074', nombre: 'Gómez, Lucas',      nota: 3  },
+      { legajo: 'A-2086', nombre: 'Herrera, Antonia',  nota: '' }
+    ]
   }
 };
 let materiaDocenteActiva = 'IUM';
@@ -2559,9 +2572,13 @@ function cambiarMateriaDocente(seccion, codigo) {
     const estadoEl = document.getElementById('ctx-notas-estado');
     estadoEl.textContent = meta.estado;
     estadoEl.className = 'badge ' + (meta.estado === 'Cerrada' ? 'badge-ok' : 'badge-warn');
+    // Repinta la tabla con los alumnos y notas de la nueva materia.
+    renderTablaNotas();
   } else if (seccion === 'asistencia') {
     document.getElementById('ctx-asistencia-materia').textContent  = meta.nombre;
     document.getElementById('ctx-asistencia-comision').textContent = meta.comision;
+    // Repinta la tabla de asistencia con el padrón de la nueva materia.
+    renderTablaAsistencia();
   }
   // Sincroniza el select correspondiente (por si la sección se abrió desde
   // el panel y no por interacción del select).
@@ -2581,24 +2598,30 @@ function abrirNotasDe(codigo) {
 
 // ---------- Render tabla de notas (docente) ----------
 // Shneiderman: prevención de errores - inputs limitados de 1 a 10.
+// La tabla se redibuja según la materia activa para que el cambio de selector
+// muestre un padrón realmente distinto (no sólo cambie el rótulo).
 function renderTablaNotas() {
   const tbody = document.getElementById('tabla-notas-body');
-  const notasIniciales = { 'A-1024': 9, 'A-1031': 7, 'A-1045': '', 'A-1058': 6, 'A-1064': 10, 'A-1077': 8, 'A-1089': '', 'A-1092': 5 };
-  tbody.innerHTML = ALUMNOS.map(a => `
-    <tr>
-      <td>${a.legajo}</td>
-      <td>${a.nombre}</td>
-      <td>
-        <input type="number" min="1" max="10" step="1"
-               aria-label="Nota de ${a.nombre} (1 a 10)"
-               value="${notasIniciales[a.legajo] ?? ''}"
-               oninput="validarNotaInput(this)" />
-      </td>
-      <td><span class="badge ${notasIniciales[a.legajo] ? (notasIniciales[a.legajo] >= 7 ? 'badge-ok' : 'badge-info') : 'badge-warn'}">
-        ${notasIniciales[a.legajo] ? (notasIniciales[a.legajo] >= 7 ? 'Promociona' : 'Regular') : 'Pendiente'}
-      </span></td>
-    </tr>
-  `).join('');
+  const meta = MATERIAS_DOCENTE[materiaDocenteActiva];
+  if (!tbody || !meta) return;
+  tbody.innerHTML = meta.alumnos.map(a => {
+    const tieneNota = a.nota !== '' && a.nota !== null && a.nota !== undefined;
+    const claseBadge = tieneNota ? (a.nota >= 7 ? 'badge-ok' : 'badge-info') : 'badge-warn';
+    const labelBadge = tieneNota ? (a.nota >= 7 ? 'Promociona' : 'Regular') : 'Pendiente';
+    return `
+      <tr>
+        <td>${a.legajo}</td>
+        <td>${a.nombre}</td>
+        <td>
+          <input type="number" min="1" max="10" step="1"
+                 aria-label="Nota de ${a.nombre} (1 a 10)"
+                 value="${tieneNota ? a.nota : ''}"
+                 oninput="validarNotaInput(this)" />
+        </td>
+        <td><span class="badge ${claseBadge}">${labelBadge}</span></td>
+      </tr>
+    `;
+  }).join('');
 }
 
 // Validación en vivo: no permite texto ni valores fuera de rango
@@ -2671,28 +2694,39 @@ function confirmarCierreActa() {
 }
 
 // ---------- Render tabla de asistencia ----------
+// Toma alumnos de la materia activa. El patrón inicial usa el legajo como
+// semilla determinística para que IUM y ALG2 muestren mezclas distintas
+// pero reproducibles (no aleatorias en cada render).
 function renderTablaAsistencia() {
   const tbody = document.getElementById('tabla-asistencia-body');
-  tbody.innerHTML = ALUMNOS.map((a, idx) => {
+  const meta = MATERIAS_DOCENTE[materiaDocenteActiva];
+  if (!tbody || !meta) return;
+  tbody.innerHTML = meta.alumnos.map((a, idx) => {
     const name = 'asis-' + a.legajo;
+    // Semilla determinística: usa la suma de los dígitos del legajo + el
+    // índice. Así IUM y ALG2 obtienen patrones de asistencia distintos.
+    const seed = (parseInt(a.legajo.replace(/\D/g,''), 10) + idx) % 5;
+    const esAusente = seed === 0;
+    const esTarde   = seed === 1;
+    const esPresente = !esAusente && !esTarde;
     return `
       <tr>
         <td>${a.legajo}</td>
         <td>${a.nombre}</td>
         <td>
           <div class="attendance-options" role="radiogroup" aria-label="Asistencia de ${a.nombre}">
-            <label class="presente ${idx % 4 !== 3 ? 'selected' : ''}">
-              <input type="radio" name="${name}" value="presente" ${idx % 4 !== 3 ? 'checked' : ''}
+            <label class="presente ${esPresente ? 'selected' : ''}">
+              <input type="radio" name="${name}" value="presente" ${esPresente ? 'checked' : ''}
                      onchange="marcarAsistencia(this)" />
               <span>● Presente</span>
             </label>
-            <label class="ausente ${idx % 4 === 3 ? 'selected' : ''}">
-              <input type="radio" name="${name}" value="ausente" ${idx % 4 === 3 ? 'checked' : ''}
+            <label class="ausente ${esAusente ? 'selected' : ''}">
+              <input type="radio" name="${name}" value="ausente" ${esAusente ? 'checked' : ''}
                      onchange="marcarAsistencia(this)" />
               <span>✕ Ausente</span>
             </label>
-            <label class="tarde">
-              <input type="radio" name="${name}" value="tarde"
+            <label class="tarde ${esTarde ? 'selected' : ''}">
+              <input type="radio" name="${name}" value="tarde" ${esTarde ? 'checked' : ''}
                      onchange="marcarAsistencia(this)" />
               <span>◐ Tarde</span>
             </label>
