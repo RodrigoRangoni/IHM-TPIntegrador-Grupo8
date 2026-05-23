@@ -1171,7 +1171,7 @@
               <div class="hero" role="region" aria-label="Próxima clase">
                 <p style="margin:0; font-size: var(--fs-xs); color: var(--celeste);">¡Hola, Lucía!</p>
                 <h2>Próxima clase</h2>
-                <p><strong>Interacción Usuario Máquina</strong> · Hoy 18:30 · Aula 304</p>
+                <p><strong>Interacción Usuario Máquina</strong> · Hoy 19:00 · Aula 304</p>
               </div>
 
               <p class="section-title">Accesos rápidos</p>
@@ -1195,7 +1195,7 @@
               <div class="alert alert-warn" role="alert">
                 <span class="alert-icon" aria-hidden="true">⚠</span>
                 <div>
-                  <strong>Inscripción a finales abierta</strong> hasta el 30/05.
+                  <strong>Inscripción a finales abierta</strong> hasta el 30/06.
                 </div>
               </div>
               <div class="alert alert-info" role="note">
@@ -1207,7 +1207,7 @@
               <div class="list-item">
                 <div>
                   <p class="li-title">Interacción Usuario Máquina</p>
-                  <p class="li-sub">Comisión A · Lun-Mié 18:30</p>
+                  <p class="li-sub">Comisión A · Lun/Mié 19:00</p>
                 </div>
                 <span class="badge badge-ok">Al día</span>
               </div>
@@ -1594,13 +1594,13 @@
 
           <div class="hero mb-2" role="region" aria-label="Próxima clase">
             <h2>Próxima clase hoy</h2>
-            <p><strong>Interacción Usuario Máquina</strong> · 18:30 · Aula 304 (Piso 3)</p>
+            <p><strong>Interacción Usuario Máquina</strong> · 19:00 · Aula 304 (Piso 3)</p>
           </div>
 
           <p class="section-title">Alertas vigentes</p>
           <div class="alert alert-warn" role="alert">
             <span class="alert-icon" aria-hidden="true">⚠</span>
-            <div><strong>Inscripción a finales abierta</strong> hasta el 30/05. Revisá los requisitos.</div>
+            <div><strong>Inscripción a finales abierta</strong> hasta el 30/06. Revisá los requisitos.</div>
           </div>
           <div class="alert alert-info" role="note">
             <span class="alert-icon" aria-hidden="true">ⓘ</span>
@@ -1611,7 +1611,7 @@
           <div class="grid-cards">
             <div class="card">
               <h3 class="card-title">Interacción Usuario Máquina</h3>
-              <p class="card-meta">Comisión A · Lun/Mié 18:30</p>
+              <p class="card-meta">Comisión A · Lun/Mié 19:00</p>
               <hr class="hr" />
               <span class="badge badge-ok">Al día</span>
             </div>
@@ -1886,7 +1886,6 @@
 
         <div class="user-card">
           <div style="font-weight:600;">Prof. Martín Díaz</div>
-          <div class="text-muted" style="color: var(--celeste-suave);">Cátedra IUM · 2026</div>
         </div>
       </aside>
 
@@ -1901,26 +1900,27 @@
              4) Mis cursos -->
         <div class="screen-step active" id="docente-panel" data-screen-d="panel">
           <h1 class="page-title">Panel del docente</h1>
-          <p class="page-subtitle">Tu jornada de hoy, lunes 20 de mayo de 2026.</p>
+          <p class="page-subtitle">Tu jornada de hoy, miércoles 3 de junio de 2026.</p>
 
-          <!-- Hero: próxima clase a dar (paralelo al hero "Próxima clase" del alumno) -->
+          <!-- Hero: próxima clase a dar (paralelo al hero "Próxima clase" del alumno).
+               Botón Asistencia para entrar directo a tomar lista de la próxima clase. -->
           <div class="hero mb-2" role="region" aria-label="Próxima clase a dar">
             <p style="margin:0; font-size: var(--fs-xs); color: var(--celeste);">¡Hola, Prof. Díaz!</p>
             <h2>Próxima clase a dar</h2>
-            <p><strong>Interacción Usuario Máquina</strong> · Hoy 18:30 · Aula 304</p>
+            <p style="margin:4px 0 10px;"><strong>Interacción Usuario Máquina</strong> · Hoy 19:00 · Aula 304</p>
+            <button class="btn btn-secondary" onclick="abrirAsistenciaDe('IUM')">Asistencia</button>
           </div>
 
           <p class="section-title">Accesos rápidos</p>
           <div class="btn-row mb-2">
             <button class="btn btn-primary" onclick="goDocente('notas')">Cargar notas</button>
             <button class="btn btn-secondary" onclick="goDocente('asistencia')">Tomar asistencia</button>
-            <button class="btn btn-ghost" onclick="goDocente('ayuda')">Ver criterios pedagógicos</button>
           </div>
 
           <p class="section-title">Alertas y pendientes</p>
           <div class="alert alert-warn" role="alert">
             <span class="alert-icon" aria-hidden="true">⚠</span>
-            <div><strong>3 actas por cerrar</strong> antes del 30/05.</div>
+            <div><strong>3 actas por cerrar</strong> antes del 30/06.</div>
           </div>
           <div class="alert alert-info" role="note">
             <span class="alert-icon" aria-hidden="true">ⓘ</span>
@@ -1928,14 +1928,14 @@
           </div>
           <div class="alert alert-info" role="note">
             <span class="alert-icon" aria-hidden="true">ⓘ</span>
-            <div><strong>2 cursos hoy</strong>: IUM (18:30) y Algoritmos II (20:00).</div>
+            <div><strong>2 cursos hoy</strong>: IUM (a las 19 Hs) y Algoritmos II (20:00).</div>
           </div>
 
           <p class="section-title">Mis cursos</p>
           <div class="grid-cards">
             <div class="card">
               <h3 class="card-title">Interacción Usuario Máquina</h3>
-              <p class="card-meta">Comisión A · Lunes y Miércoles 18:30</p>
+              <p class="card-meta">Comisión A · Lunes y Miércoles 19:00</p>
               <hr class="hr" />
               <div class="btn-row">
                 <button class="btn btn-secondary" onclick="abrirAsistenciaDe('IUM')">Asistencia</button>
