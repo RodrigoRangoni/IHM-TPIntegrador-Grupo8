@@ -902,8 +902,8 @@
     cursor: pointer;
     padding: 6px 8px;
     border-radius: var(--radio-s);
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 44px;
+    min-height: 44px;
   }
   .screen-header .back-btn:hover { background: var(--celeste-suave); }
   .screen-header h1 {
@@ -1553,7 +1553,67 @@
        ============================================================= -->
   <section id="view-alumno-web" class="view" aria-label="Vista Web Alumno">
 
-    <div class="desktop-stage">
+    <!-- Pantalla de login del alumno (escritorio) -->
+    <div class="desktop-login-stage active" id="alumno-web-login-stage" role="region" aria-label="Acceso del alumno">
+      <div class="desktop-login-card">
+        <div class="login-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M6 4v16M6 12l9-8M6 12l9 8"
+                stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+        <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Klassy</h1>
+        <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Acceso para alumnos</p>
+
+        <form id="form-login-alumno-web" novalidate>
+          <div class="form-field">
+            <label for="login-alumno-web-usuario">Usuario o DNI</label>
+            <input type="text" id="login-alumno-web-usuario" name="usuario" autocomplete="username"
+                   placeholder="Ej. 35123456 (sin puntos)" required />
+            <span class="field-error">Ingresá tu usuario o DNI.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="login-alumno-web-pass">Contraseña</label>
+            <div class="input-with-toggle">
+              <input type="password" id="login-alumno-web-pass" name="pass" autocomplete="current-password"
+                     placeholder="Tu contraseña" required minlength="4" />
+              <button type="button" class="toggle-password"
+                      data-target="login-alumno-web-pass"
+                      aria-pressed="false"
+                      aria-label="Mostrar contraseña"
+                      title="Mostrar contraseña"
+                      onclick="togglePasswordVisibility(this)">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error">La contraseña no puede estar vacía.</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+
+          <div style="text-align:center; margin-top: 14px;">
+            <a href="#" class="btn btn-ghost" onclick="event.preventDefault(); showToast('Te enviamos un mail con instrucciones.', 'success')">¿Olvidaste tu clave?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="desktop-stage" id="alumno-web-app-stage" style="display:none;">
       <aside class="sidebar" aria-label="Menú principal del alumno (escritorio)">
         <h2>Panel Alumno</h2>
         <nav>
@@ -1565,6 +1625,9 @@
           </button>
           <button data-alumno-target="notas" onclick="goAlumnoWeb('notas')">
             <span aria-hidden="true">📊</span> Mis notas
+          </button>
+          <button data-alumno-target="calendario" onclick="goAlumnoWeb('calendario')">
+            <span aria-hidden="true">🗓</span> Calendario
           </button>
         </nav>
         <div class="user-card">
@@ -1769,6 +1832,52 @@
               </thead>
               <tbody id="web-tabla-notas-body">
                 <!-- Generado por JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============== CALENDARIO ALUMNO WEB ============== -->
+        <div class="screen-step" id="web-alumno-calendario" data-screen-w="calendario">
+          <h1 class="page-title">Calendario académico</h1>
+          <p class="page-subtitle">Clases, entregas y exámenes de esta semana.</p>
+
+          <p class="section-title">Esta semana</p>
+          <div class="table-wrap">
+            <table class="data" aria-label="Calendario académico del alumno">
+              <thead>
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Materia</th>
+                  <th scope="col">Detalle</th>
+                  <th scope="col">Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Lun 20/05</td>
+                  <td>Interacción Usuario Máquina</td>
+                  <td>19:00 · Aula 304</td>
+                  <td><span class="badge badge-info">Clase</span></td>
+                </tr>
+                <tr>
+                  <td>Mié 22/05</td>
+                  <td>Interacción Usuario Máquina</td>
+                  <td>19:00 · Aula 304</td>
+                  <td><span class="badge badge-info">Clase</span></td>
+                </tr>
+                <tr>
+                  <td>Jue 23/05</td>
+                  <td>Algoritmos II</td>
+                  <td>Entrega TP 1 · 23:59</td>
+                  <td><span class="badge badge-warn">Entrega</span></td>
+                </tr>
+                <tr>
+                  <td>Vie 24/05</td>
+                  <td>Interacción Usuario Máquina</td>
+                  <td>Examen parcial · 19:00</td>
+                  <td><span class="badge badge-error">Parcial</span></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -2465,12 +2574,48 @@ function logoutDocente() {
   showToast('Cerraste sesión correctamente.', 'success');
 }
 
-// ---------- Logout alumno web ----------
+// ---------- Login / Logout alumno web ----------
+const alumnoWebLoginStage = document.getElementById('alumno-web-login-stage');
+const alumnoWebAppStage   = document.getElementById('alumno-web-app-stage');
+
+function mostrarLoginAlumnoWeb() {
+  alumnoWebLoginStage.classList.add('active');
+  alumnoWebAppStage.style.display = 'none';
+}
+function mostrarAppAlumnoWeb() {
+  alumnoWebLoginStage.classList.remove('active');
+  alumnoWebAppStage.style.display = '';
+  goAlumnoWeb('panel');
+}
+
+document.getElementById('form-login-alumno-web').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const usuario = document.getElementById('login-alumno-web-usuario');
+  const pass    = document.getElementById('login-alumno-web-pass');
+  let ok = true;
+
+  [usuario, pass].forEach(input => {
+    const field = input.closest('.form-field');
+    if (!input.value.trim() || (input.id === 'login-alumno-web-pass' && input.value.length < 4)) {
+      field.classList.add('invalid');
+      input.setAttribute('aria-invalid', 'true');
+      ok = false;
+    } else {
+      field.classList.remove('invalid');
+      input.removeAttribute('aria-invalid');
+    }
+  });
+
+  if (!ok) {
+    showToast('Revisá los campos marcados.', 'error');
+    return;
+  }
+  mostrarAppAlumnoWeb();
+  showToast('Bienvenida, Lucía.', 'success');
+});
+
 function logoutAlumnoWeb() {
-  // Para mantener la simetría con la vista docente y mobile:
-  // se cambia a la vista mobile y se vuelve al login (único formulario de acceso del alumno).
-  setVista('alumno');
-  goAlumno('login');
+  mostrarLoginAlumnoWeb();
   showToast('Cerraste sesión correctamente.', 'success');
 }
 
