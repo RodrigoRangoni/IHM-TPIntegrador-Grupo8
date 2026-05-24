@@ -912,7 +912,7 @@
     color: var(--azul-profundo);
   }
 
-  /* Tabs presente/ausente/tarde */
+  /* Tabs presente/ausente */
   .attendance-options {
     display: flex;
     gap: 4px;
@@ -942,12 +942,6 @@
     color: var(--rojo-error);
     border-color: #f1b8b8;
   }
-  .attendance-options label.selected.tarde {
-    background: var(--amarillo-suave);
-    color: var(--amarillo-warn);
-    border-color: #f0d57c;
-  }
-
   /* Cards de marco teórico */
   .theory-grid {
     display: grid;
@@ -2931,8 +2925,7 @@ function renderTablaAsistencia() {
     // índice. Así IUM y ALG2 obtienen patrones de asistencia distintos.
     const seed = (parseInt(a.legajo.replace(/\D/g,''), 10) + idx) % 5;
     const esAusente = seed === 0;
-    const esTarde   = seed === 1;
-    const esPresente = !esAusente && !esTarde;
+    const esPresente = !esAusente;
     return `
       <tr>
         <td>${a.legajo}</td>
@@ -2948,11 +2941,6 @@ function renderTablaAsistencia() {
               <input type="radio" name="${name}" value="ausente" ${esAusente ? 'checked' : ''}
                      onchange="marcarAsistencia(this)" />
               <span>✕ Ausente</span>
-            </label>
-            <label class="tarde ${esTarde ? 'selected' : ''}">
-              <input type="radio" name="${name}" value="tarde" ${esTarde ? 'checked' : ''}
-                     onchange="marcarAsistencia(this)" />
-              <span>◐ Tarde</span>
             </label>
           </div>
         </td>
