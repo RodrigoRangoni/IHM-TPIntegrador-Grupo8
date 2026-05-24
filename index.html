@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Klassly — Mockup TP Integrador IUM</title>
+<title>Klassy — Mockup TP Integrador IUM</title>
 <!--
-  Klassly — Mockup navegable
+  Klassy — Mockup navegable
   Trabajo Práctico Integrador - Interacción Usuario Máquina
   Mockup conceptual de baja/media fidelidad.
   Marco teórico aplicado: DCU, Dieter Rams/Bauhaus, Shneiderman (8 reglas de oro),
@@ -101,7 +101,7 @@
     z-index: 50;
     box-shadow: var(--sombra-1);
   }
-  /* Wordmark Klassly: tracking ajustado para mejorar identidad de marca.
+  /* Wordmark Klassy: tracking ajustado para mejorar identidad de marca.
      Letter-spacing levemente cerrado, peso semibold, tipografía sans-serif del
      sistema (consistente entre dispositivos, sin dependencias externas). */
   .app-brand {
@@ -112,7 +112,7 @@
     font-size: var(--fs-l);
     letter-spacing: -0.2px;
   }
-  /* Isologo Klassly: cuadrado contenedor + K geométrica.
+  /* Isologo Klassy: cuadrado contenedor + K geométrica.
      Principios canónicos: simple, escalable (vectorial), monocromo-compatible,
      área de protección equivalente al ancho del trazo. Estilo Bauhaus. */
   .app-brand .logo {
@@ -1042,7 +1042,7 @@
 -->
 <header class="app-header" role="banner">
   <div class="app-brand">
-    <!-- Isologo Klassly (SVG inline, escalable, sin imágenes externas).
+    <!-- Isologo Klassy (SVG inline, escalable, sin imágenes externas).
          "K" construida con tres trazos geométricos (Bauhaus: forma sigue función). -->
     <span class="logo" aria-hidden="true">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -1051,7 +1051,7 @@
               stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       </svg>
     </span>
-    <span>Klassly</span>
+    <span>Klassy</span>
   </div>
 
   <!-- El selector de rol se eliminó por ser redundante con el toggle visible
@@ -1079,7 +1079,7 @@
 
         <div class="status-bar" aria-hidden="true">
           <span>9:41</span>
-          <span>Klassly</span>
+          <span>Klassy</span>
           <span>100%</span>
         </div>
 
@@ -1471,7 +1471,7 @@
                     <p class="li-title">Análisis Matemático I</p>
                     <p class="li-sub">2025 · 1er cuat. · Nota: <strong>4</strong></p>
                   </div>
-                  <span class="badge badge-error">Pendiente</span>
+                  <span class="badge badge-info">Regular</span>
                 </div>
               </div>
             </div>
@@ -1504,14 +1504,14 @@
               <div class="list-item">
                 <div>
                   <p class="li-title">Lun 20/05 · IUM</p>
-                  <p class="li-sub">18:30 · Aula 304</p>
+                  <p class="li-sub">19:00 · Aula 304</p>
                 </div>
                 <span class="badge badge-info">Clase</span>
               </div>
               <div class="list-item">
                 <div>
                   <p class="li-title">Mié 22/05 · IUM</p>
-                  <p class="li-sub">18:30 · Aula 304</p>
+                  <p class="li-sub">19:00 · Aula 304</p>
                 </div>
                 <span class="badge badge-info">Clase</span>
               </div>
@@ -1525,7 +1525,7 @@
               <div class="list-item">
                 <div>
                   <p class="li-title">Vie 24/05 · IUM</p>
-                  <p class="li-sub">Examen parcial · 18:30</p>
+                  <p class="li-sub">Examen parcial · 19:00</p>
                 </div>
                 <span class="badge badge-error">Parcial</span>
               </div>
@@ -1794,7 +1794,7 @@
                 stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
       </div>
-        <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Klassly</h1>
+        <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Klassy</h1>
         <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Acceso para docentes</p>
 
         <form id="form-login-docente" novalidate>
@@ -1868,7 +1868,7 @@
 
       <!-- Menú lateral (Shneiderman: consistencia + control del usuario) -->
       <aside class="sidebar" aria-label="Menú principal del docente">
-        <h2>Klassly</h2>
+        <h2>Klassy</h2>
         <nav>
           <button data-docente-target="panel" aria-current="page" onclick="goDocente('panel')">
             <span aria-hidden="true">▦</span> Panel
@@ -2188,7 +2188,7 @@
 
 <script>
 /* =====================================================================
-   Klassly - JS vanilla
+   Klassy - JS vanilla
    Navegación entre vistas y pantallas + interacciones del prototipo.
    Toda la lógica está comentada con la regla teórica que respalda la decisión.
    ===================================================================== */
@@ -2643,8 +2643,8 @@ function renderTablaNotas() {
   if (!tbody || !meta) return;
   tbody.innerHTML = meta.alumnos.map(a => {
     const tieneNota = a.nota !== '' && a.nota !== null && a.nota !== undefined;
-    const claseBadge = tieneNota ? (a.nota >= 7 ? 'badge-ok' : 'badge-info') : 'badge-warn';
-    const labelBadge = tieneNota ? (a.nota >= 7 ? 'Promociona' : 'Regular') : 'Pendiente';
+    const claseBadge = tieneNota ? (a.nota >= 7 ? 'badge-ok' : (a.nota >= 4 ? 'badge-info' : 'badge-error')) : 'badge-warn';
+    const labelBadge = tieneNota ? (a.nota >= 7 ? 'Promociona' : (a.nota >= 4 ? 'Regular' : 'Desaprobada')) : 'Pendiente';
     return `
       <tr>
         <td>${a.legajo}</td>
@@ -2693,9 +2693,12 @@ function actualizarEstadoFila(input, valor) {
   } else if (valor >= 7) {
     badge.classList.add('badge-ok');
     badge.textContent = 'Promociona';
-  } else {
+  } else if (valor >= 4) {
     badge.classList.add('badge-info');
     badge.textContent = 'Regular';
+  } else {
+    badge.classList.add('badge-error');
+    badge.textContent = 'Desaprobada';
   }
 }
 
@@ -2848,7 +2851,7 @@ const HISTORIAL_ALUMNO_WEB = [
   { materia: 'Bases de Datos II',           periodo: '2026-1', periodoTxt: '2026 · 1° cuat.', nota: '—', cond: 'Pendiente',    clase: 'badge-warn' },
   { materia: 'Programación III',            periodo: '2025-2', periodoTxt: '2025 · 2° cuat.', nota: 8,  cond: 'Promocionada', clase: 'badge-ok' },
   { materia: 'Matemática Discreta',         periodo: '2025-2', periodoTxt: '2025 · 2° cuat.', nota: 6,  cond: 'Regular',      clase: 'badge-info' },
-  { materia: 'Análisis Matemático I',       periodo: '2025-1', periodoTxt: '2025 · 1° cuat.', nota: 4,  cond: 'Pendiente',    clase: 'badge-error' }
+  { materia: 'Análisis Matemático I',       periodo: '2025-1', periodoTxt: '2025 · 1° cuat.', nota: 4,  cond: 'Regular',      clase: 'badge-info' }
 ];
 
 function renderHistorialAlumnoWeb() {
