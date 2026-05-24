@@ -2282,9 +2282,12 @@
 
 <!-- Modal: cerrar acta -->
 <div class="modal-backdrop" id="modal-cerrar-acta" role="dialog" aria-modal="true" aria-labelledby="m2-title" aria-describedby="m2-desc">
-  <div class="modal">
+  <div class="modal" style="max-width:540px;">
     <h3 id="m2-title">¿Cerrar el acta de notas?</h3>
-    <p id="m2-desc">Una vez cerrada el acta, no podrás modificar las notas sin pedir reapertura. Esta acción es definitiva.</p>
+    <div id="m2-resumen">
+      <!-- Resumen inyectado por revisarYCerrarActa() -->
+    </div>
+    <p id="m2-desc" style="margin-top:12px;">Una vez cerrada el acta, no podrás modificar las notas sin pedir reapertura. Esta acción es definitiva.</p>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-cerrar-acta')">Cancelar</button>
       <button class="btn btn-danger" onclick="confirmarCierreActa()">Sí, cerrar acta</button>
@@ -2862,6 +2865,40 @@ function revisarYCerrarActa() {
     invalidos[0].focus();
     return;
   }
+
+  // Generar resumen de revisión (DCU: el docente revisa la información antes del cierre).
+  const meta = MATERIAS_DOCENTE[materiaDocenteActiva];
+  const inputs = document.querySelectorAll('#tabla-notas-body input[type="number"]');
+  let promo = 0, regular = 0, desap = 0, pendiente = 0;
+  const filas = meta.alumnos.map((a, i) => {
+    const val = inputs[i] ? inputs[i].value : '';
+    const num = val !== '' ? Number(val) : null;
+    let cond, clase;
+    if (num === null) { cond = 'Pendiente'; clase = 'badge-warn'; pendiente++; }
+    else if (num >= 7) { cond = 'Promociona'; clase = 'badge-ok'; promo++; }
+    else if (num >= 4) { cond = 'Regular'; clase = 'badge-info'; regular++; }
+    else { cond = 'Desaprobada'; clase = 'badge-error'; desap++; }
+    return '<tr><td>' + a.legajo + '</td><td>' + a.nombre + '</td><td style="text-align:center;"><strong>' + (val || '—') + '</strong></td><td><span class="badge ' + clase + '">' + cond + '</span></td></tr>';
+  });
+
+  const resumen = document.getElementById('m2-resumen');
+  resumen.innerHTML =
+    '<div class="context-bar" style="margin-bottom:12px;">' +
+      '<div><strong>Materia:</strong> ' + meta.nombre + '</div>' +
+      '<div><strong>Comisión:</strong> ' + meta.comision + '</div>' +
+    '</div>' +
+    '<div class="table-wrap" style="max-height:220px; overflow-y:auto;">' +
+      '<table class="data"><thead><tr>' +
+        '<th scope="col">Legajo</th><th scope="col">Alumno</th><th scope="col">Nota</th><th scope="col">Estado</th>' +
+      '</tr></thead><tbody>' + filas.join('') + '</tbody></table>' +
+    '</div>' +
+    '<div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:var(--fs-s);">' +
+      '<span class="badge badge-ok">Promociona: ' + promo + '</span>' +
+      '<span class="badge badge-info">Regular: ' + regular + '</span>' +
+      (desap > 0 ? '<span class="badge badge-error">Desaprobada: ' + desap + '</span>' : '') +
+      (pendiente > 0 ? '<span class="badge badge-warn">Pendiente: ' + pendiente + '</span>' : '') +
+    '</div>';
+
   abrirModal('modal-cerrar-acta');
 }
 
