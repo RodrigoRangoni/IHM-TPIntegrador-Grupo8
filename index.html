@@ -1096,8 +1096,8 @@
                 stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
       </div>
-              <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Bienvenido</h1>
-              <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Ingresá con tu usuario o DNI</p>
+              <h1 style="text-align:center; margin: 0 0 4px; color: var(--azul-profundo);">Klassy</h1>
+              <p style="text-align:center; color: var(--gris-texto); margin: 0 0 20px;">Acceso para alumnos</p>
 
               <!-- Las aclaraciones van como placeholder dentro del input
                    (Miro-Leo-Pienso + Rams: "menos, pero mejor"). Se quitó la
@@ -1214,7 +1214,7 @@
               <div class="list-item">
                 <div>
                   <p class="li-title">Algoritmos II</p>
-                  <p class="li-sub">Comisión B · Mar-Jue 20:00</p>
+                  <p class="li-sub">Comisión B · Mar/Jue 20:00</p>
                 </div>
                 <span class="badge badge-warn">Pendiente</span>
               </div>
@@ -2009,7 +2009,7 @@
              4) Mis cursos -->
         <div class="screen-step active" id="docente-panel" data-screen-d="panel">
           <h1 class="page-title">Panel del docente</h1>
-          <p class="page-subtitle">Tu jornada de hoy, miércoles 3 de junio de 2026.</p>
+          <p class="page-subtitle">Tu jornada de hoy, miércoles 20 de mayo de 2026.</p>
 
           <!-- Hero: próxima clase a dar (paralelo al hero "Próxima clase" del alumno).
                Sin botón propio: la acción se accede desde Accesos rápidos o desde
@@ -2133,7 +2133,7 @@
           </div>
 
           <div class="context-bar" role="region" aria-label="Contexto de asistencia">
-            <div><strong>Fecha:</strong> Lun 20/05/2026</div>
+            <div><strong>Fecha:</strong> Mié 20/05/2026</div>
             <div><strong>Materia:</strong> <span id="ctx-asistencia-materia">Interacción Usuario Máquina</span></div>
             <div><strong>Comisión:</strong> <span id="ctx-asistencia-comision">A · Turno Noche</span></div>
           </div>
@@ -2433,7 +2433,8 @@ function goAlumnoWeb(screen) {
     el.classList.toggle('active', el.dataset.screenW === screen);
   });
   document.querySelectorAll('#view-alumno-web .sidebar nav button').forEach(btn => {
-    btn.setAttribute('aria-current', btn.dataset.alumnoTarget === screen ? 'page' : 'false');
+    if (btn.dataset.alumnoTarget === screen) btn.setAttribute('aria-current', 'page');
+    else btn.removeAttribute('aria-current');
   });
   // Si se navega a inscripción, siempre arrancar en el paso 1 (cierre claro de secuencia).
   if (screen === 'inscripcion') cambiarPasoInscripcionWeb(1);
@@ -2445,7 +2446,8 @@ function goDocente(screen) {
     el.classList.toggle('active', el.dataset.screenD === screen);
   });
   document.querySelectorAll('#view-docente .sidebar nav button').forEach(btn => {
-    btn.setAttribute('aria-current', btn.dataset.docenteTarget === screen ? 'page' : 'false');
+    if (btn.dataset.docenteTarget === screen) btn.setAttribute('aria-current', 'page');
+    else btn.removeAttribute('aria-current');
   });
 }
 
@@ -2945,8 +2947,12 @@ function marcarTodosPresentes() {
 
 // ---------- Modales ----------
 // Shneiderman: cancelable con botón y con Escape (control del usuario).
+// WCAG: focus trap mantiene el foco dentro del modal mientras esté abierto.
+let _modalTrigger = null; // elemento que abrió el modal (para devolver foco al cerrar)
+
 function abrirModal(id) {
   const modal = document.getElementById(id);
+  _modalTrigger = document.activeElement;
   modal.classList.add('open');
   // Foco al primer botón de acción para accesibilidad por teclado.
   const firstBtn = modal.querySelector('.btn-primary, .btn-danger, .btn-secondary, button');
@@ -2955,12 +2961,34 @@ function abrirModal(id) {
 
 function cerrarModal(id) {
   document.getElementById(id).classList.remove('open');
+  // Devolver foco al elemento que abrió el modal (accesibilidad).
+  if (_modalTrigger && _modalTrigger.focus) _modalTrigger.focus();
+  _modalTrigger = null;
 }
 
-// Cerrar modales con tecla Escape (regla de accesibilidad + Shneiderman).
+// Cerrar modales con tecla Escape + focus trap (WCAG + Shneiderman).
 document.addEventListener('keydown', (e) => {
+  const openModal = document.querySelector('.modal-backdrop.open');
+  if (!openModal) return;
+
   if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+    openModal.classList.remove('open');
+    if (_modalTrigger && _modalTrigger.focus) _modalTrigger.focus();
+    _modalTrigger = null;
+    return;
+  }
+
+  // Focus trap: Tab/Shift+Tab ciclan dentro del modal.
+  if (e.key === 'Tab') {
+    const focusable = openModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   }
 });
 
