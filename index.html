@@ -2156,80 +2156,73 @@
           </form>
         </div>
 
-        <!-- ============== AYUDA TEÓRICA ============== -->
+        <!-- ============== AYUDA TEÓRICA (Tutorial Vista Web Docente) ============== -->
         <div class="screen-step" id="docente-ayuda" data-screen-d="ayuda">
-          <h1 class="page-title">Criterios de diseño aplicados</h1>
-          <p class="page-subtitle">Esta sección documenta el marco teórico que guía el prototipo, para usarla durante la defensa.</p>
+          <h1 class="page-title">Tutorial: Vista Web Docente</h1>
+          <p class="page-subtitle">Guía paso a paso para usar la plataforma: dónde está cada cosa y cómo realizar las tareas más frecuentes.</p>
 
           <div class="theory-grid">
             <div class="theory-card">
-              <h3><span class="tag">DCU</span> Diseño Centrado en el Usuario</h3>
-              <p class="text-muted" style="margin:0;">Las funciones se priorizan según las tareas reales de cada rol.</p>
+              <h3><span class="tag">1</span> Menú lateral</h3>
+              <p class="text-muted" style="margin:0;">Desde la barra de la izquierda accedés a todas las secciones:</p>
               <ul>
-                <li>Alumno: inscribirse, ver notas y calendario al inicio.</li>
-                <li>Docente: cargar notas y asistencias desde el panel.</li>
+                <li><strong>Panel:</strong> tu inicio, con la jornada de hoy.</li>
+                <li><strong>Carga de notas:</strong> cargar y cerrar actas.</li>
+                <li><strong>Asistencias:</strong> registrar presentes y ausentes.</li>
+                <li><strong>Ayuda teórica:</strong> este tutorial.</li>
               </ul>
             </div>
 
             <div class="theory-card">
-              <h3><span class="tag">Rams</span> "Menos, pero mejor"</h3>
-              <p class="text-muted" style="margin:0;">Bauhaus: la forma sigue a la función.</p>
+              <h3><span class="tag">2</span> Panel del docente</h3>
+              <p class="text-muted" style="margin:0;">Es la pantalla de inicio y resume tu día.</p>
               <ul>
-                <li>Paleta sobria y tipografía del sistema.</li>
-                <li>Sin íconos decorativos ni sombras agresivas.</li>
-                <li>Cada componente cumple un rol claro.</li>
+                <li>Arriba ves tu <strong>próxima clase</strong> a dar.</li>
+                <li>En <strong>Accesos rápidos</strong> entrás directo a cargar notas o tomar asistencia.</li>
+                <li>En <strong>Alertas y pendientes</strong> aparecen actas por cerrar y borradores.</li>
+                <li>En <strong>Mis cursos</strong> abrís Asistencia o Notas de cada materia.</li>
               </ul>
             </div>
 
             <div class="theory-card">
-              <h3><span class="tag">Shneiderman</span> 8 reglas de oro</h3>
+              <h3><span class="tag">3</span> Cargar notas</h3>
               <ul>
-                <li>Consistencia visual y de patrones.</li>
-                <li>Atajos: accesos rápidos y menú lateral.</li>
-                <li>Feedback inmediato (toasts, badges).</li>
-                <li>Cierre claro de secuencias (stepper).</li>
-                <li>Prevención de errores (rango 1-10).</li>
-                <li>Volver/cancelar siempre disponible.</li>
-                <li>Control del usuario sobre el sistema.</li>
-                <li>Reducción de memoria de corto plazo (contexto visible).</li>
+                <li>Entrá a <strong>Carga de notas</strong> desde el menú o un acceso rápido.</li>
+                <li>Elegí la <strong>materia / comisión</strong> en el selector.</li>
+                <li>La barra de contexto te recuerda materia, comisión, período y estado.</li>
+                <li>Completá la columna <strong>Nota</strong> con valores del 1 al 10.</li>
+                <li>Si dejás un campo vacío, el alumno queda como <strong>"Pendiente"</strong>.</li>
               </ul>
             </div>
 
             <div class="theory-card">
-              <h3><span class="tag">M-L-P</span> Miro / Leo / Pienso</h3>
+              <h3><span class="tag">4</span> Guardar y cerrar acta</h3>
               <ul>
-                <li><strong>Miro:</strong> tareas cotidianas al golpe de vista en el home.</li>
-                <li><strong>Leo:</strong> textos autoexplicativos solo cuando suman.</li>
-                <li><strong>Pienso:</strong> modal de confirmación antes de cerrar acta o inscribirse.</li>
+                <li><strong>Guardar borrador:</strong> guarda los cambios para seguir después.</li>
+                <li><strong>Revisar y cerrar acta:</strong> muestra un resumen y pide confirmación antes de cerrar.</li>
+                <li>Una vez cerrada, el acta queda firme; revisá las notas antes de confirmar.</li>
+                <li><strong>Cancelar</strong> te devuelve al Panel sin guardar.</li>
               </ul>
             </div>
 
             <div class="theory-card">
-              <h3><span class="tag">A11y</span> Usabilidad y Accesibilidad</h3>
+              <h3><span class="tag">5</span> Tomar asistencia</h3>
               <ul>
-                <li>Contraste alto y jerarquía visual.</li>
-                <li>Foco visible y navegación por teclado.</li>
-                <li>Labels asociados y mensajes no dependientes del color.</li>
-                <li>Botones táctiles ≥ 44px en mobile.</li>
+                <li>Entrá a <strong>Asistencias</strong> y elegí la materia / comisión.</li>
+                <li>La fecha de la clase de hoy aparece en la barra de contexto.</li>
+                <li>Marcá el <strong>estado</strong> de cada alumno (presente / ausente).</li>
+                <li>Usá <strong>"Marcar todos presentes"</strong> para agilizar y luego corregí las excepciones.</li>
+                <li>Tocá <strong>Guardar</strong> para registrar la asistencia.</li>
               </ul>
             </div>
 
             <div class="theory-card">
-              <h3><span class="tag">Líquidas</span> Interfaces líquidas</h3>
-              <p class="text-muted" style="margin:0;">Misma identidad visual adaptada a cada dispositivo.</p>
+              <h3><span class="tag">6</span> Consejos rápidos</h3>
               <ul>
-                <li>Alumno: contenedor mobile vertical.</li>
-                <li>Docente: panel amplio con menú lateral.</li>
-                <li>Tablas con scroll horizontal en pantallas chicas.</li>
-              </ul>
-            </div>
-
-            <div class="theory-card">
-              <h3><span class="tag">Norman / Kano</span> Confianza y prioridades</h3>
-              <ul>
-                <li>Simplicidad que genera confianza.</li>
-                <li>Confirmaciones explícitas en acciones críticas.</li>
-                <li>Se priorizan funciones <em>imprescindibles</em> (Kano básicas) sobre las accesorias.</li>
+                <li>El <strong>contexto</strong> (materia, comisión, fecha) siempre está visible: revisalo antes de guardar.</li>
+                <li>Podés cambiar de materia con el selector sin salir de la sección.</li>
+                <li>Las acciones críticas piden <strong>confirmación</strong>: no se cierra nada por error.</li>
+                <li>Podés navegar con el <strong>teclado</strong>; el foco se ve resaltado.</li>
               </ul>
             </div>
           </div>
